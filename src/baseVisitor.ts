@@ -155,3 +155,4 @@ export class BaseVisitor {
     }
   }
 }
+export default BaseVisitor

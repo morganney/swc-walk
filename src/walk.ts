@@ -1,11 +1,14 @@
 import { simple as acornSimpleWalk } from 'acorn-walk'
 
 import { BaseVisitor } from './baseVisitor.js'
-import type { Simple } from './types.js'
+import type { SimpleVisitors } from './types.js'
 
-const base = new BaseVisitor()
-
-export const simple: Simple = (ast, visitors, baseVisitor = base, state) => {
+export function simple<T = unknown>(
+  ast: Node,
+  visitors: SimpleVisitors<T>,
+  baseVisitor = new BaseVisitor<T>(),
+  state?: T,
+) {
   // @ts-expect-error (acorn-walk ast nodes have start/end instead of span)
-  acornSimpleWalk(ast, visitors, baseVisitor, state)
+  acornSimpleWalk<T>(ast, visitors, baseVisitor, state)
 }

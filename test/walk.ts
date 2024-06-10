@@ -16,13 +16,13 @@ const state: WalkState = {
 describe('swc-walk', () => {
   it('walks an swc ast', () => {
     const ast = reparseSync(`
-      let foo = bar = () => {}
+      let foo = bar = <baz>(p: baz): baz => {return p}
       const [a, b]: [number, number] = [1,2]
       const arrow = (arg: string) => {
         try {
-          throw new Error('boom')
+          throw new Error<string>('boom')
         } catch(err) {
-          console.log(err)
+          console.log<object>(err)
         } finally {
           return 'foo'
         }
@@ -59,5 +59,39 @@ describe('swc-walk', () => {
       undefined,
       state,
     )
+
+    let typeParameterDeclarationNodes = 0
+
+    simple(reparseSync(`type SetInputText = Dispatch<SetStateAction<string>>`), {
+      TsTypeAliasDeclaration(node) {
+        assert.equal(node.type, 'TsTypeAliasDeclaration')
+      },
+      TsTypeParameterInstantiation(node) {
+        assert.equal(node.type, 'TsTypeParameterInstantiation')
+        typeParameterDeclarationNodes++
+      },
+      TsTypeReference(node) {
+        assert.equal(node.type, 'TsTypeReference')
+      },
+    })
+
+    assert.equal(typeParameterDeclarationNodes, 2)
+
+    let tsTypeParameterNodes = 0
+
+    simple(reparseSync('interface List<T extends S> extends U, V { items: T[] }'), {
+      TsArrayType(node) {
+        assert.equal(node.type, 'TsArrayType')
+      },
+      TsInterfaceBody(node) {
+        assert.equal(node.type, 'TsInterfaceBody')
+      },
+      TsTypeParameter(node) {
+        assert.equal(node.type, 'TsTypeParameter')
+        tsTypeParameterNodes++
+      },
+    })
+
+    assert.equal(tsTypeParameterNodes, 1)
   })
 })

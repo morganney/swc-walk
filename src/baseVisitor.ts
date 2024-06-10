@@ -124,7 +124,49 @@ export class BaseVisitor {
       cb(n.finalizer, st)
     }
   }
+  TsArrayType<S>(n: swc.TsArrayType, st: S, cb: Callback<S>) {
+    cb(n.elemType, st)
+  }
+  TsExpressionWithTypeArguments<S>(n: swc.TsExpressionWithTypeArguments, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
+
+    if (n.typeArguments) {
+      cb(n.typeArguments, st)
+    }
+  }
+  TsInterfaceDeclaration<S>(n: swc.TsInterfaceDeclaration, st: S, cb: Callback<S>) {
+    cb(n.id, st)
+    cb(n.body, st)
+
+    for (const ext of n.extends) {
+      cb(ext, st)
+    }
+
+    if (n.typeParams) {
+      cb(n.typeParams, st)
+    }
+  }
+  TsInterfaceBody<S>(n: swc.TsInterfaceBody, st: S, cb: Callback<S>) {
+    for (const ele of n.body) {
+      cb(ele, st)
+    }
+  }
   TsKeywordType = ignore
+  TsPropertySignature<S>(n: swc.TsPropertySignature, st: S, cb: Callback<S>) {
+    for (const param of n.params) {
+      cb(param, st)
+    }
+
+    cb(n.key, st)
+
+    if (n.typeAnnotation) {
+      cb(n.typeAnnotation, st)
+    }
+
+    if (n.typeParams) {
+      cb(n.typeParams, st)
+    }
+  }
   TsTupleElement<S>(n: swc.TsTupleElement, st: S, cb: Callback<S>) {
     cb(n, st)
     cb(n.ty, st)
@@ -134,12 +176,43 @@ export class BaseVisitor {
       cb(el, st)
     }
   }
+  TsTypeAliasDeclaration<S>(n: swc.TsTypeAliasDeclaration, st: S, cb: Callback<S>) {
+    cb(n.id, st)
+    cb(n.typeAnnotation, st)
+
+    if (n.typeParams) {
+      cb(n.typeParams, st)
+    }
+  }
   TsTypeAnnotation<S>(n: swc.TsTypeAnnotation, st: S, cb: Callback<S>) {
     cb(n.typeAnnotation, st)
+  }
+  TsTypeParameter<S>(n: swc.TsTypeParameter, st: S, cb: Callback<S>) {
+    cb(n.name, st)
+
+    if (n.constraint) {
+      cb(n.constraint, st)
+    }
+
+    if (n.default) {
+      cb(n.default, st)
+    }
+  }
+  TsTypeParameterDeclaration<S>(n: swc.TsTypeParameterDeclaration, st: S, cb: Callback<S>) {
+    for (const param of n.parameters) {
+      cb(param, st)
+    }
   }
   TsTypeParameterInstantiation<S>(n: swc.TsTypeParameterInstantiation, st: S, cb: Callback<S>) {
     for (const param of n.params) {
       cb(param, st)
+    }
+  }
+  TsTypeReference<S>(n: swc.TsTypeReference, st: S, cb: Callback<S>) {
+    cb(n.typeName, st)
+
+    if (n.typeParams) {
+      cb(n.typeParams, st)
     }
   }
   VariableDeclaration<S>(n: swc.VariableDeclaration, st: S, cb: Callback<S>) {

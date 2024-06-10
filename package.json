@@ -1,6 +1,6 @@
 {
   "name": "swc-walk",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.1",
   "description": "Walk an AST from SWC and visit each node type.",
   "main": "dist/esm/walk.js",
   "type": "module",
@@ -36,6 +36,7 @@
   "scripts": {
     "prettier": "prettier -w .",
     "lint": "eslint --ignore-pattern dist .",
+    "lint:fix": "eslint --ignore-pattern dist --fix .",
     "build": "duel --dirs",
     "test": "c8 --reporter=text --reporter=text-summary --reporter=lcov tsx --test --test-reporter=spec test/*.ts",
     "prepack": "npm run build"
@@ -67,9 +68,10 @@
     "@knighted/duel": "^2.0.0-rc.1",
     "@knighted/dump": "^1.0.3",
     "@knighted/reparse": "^2.0.0",
+    "@stylistic/eslint-plugin-js": "^2.1.0",
     "@swc/types": "^0.1.7",
     "@types/node": "^20.13.0",
-    "c8": "^9.1.0",
+    "c8": "^10.0.0",
     "eslint": "^9.4.0",
     "eslint-plugin-n": "^17.8.1",
     "prettier": "^3.3.0",

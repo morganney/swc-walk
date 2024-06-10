@@ -1,7 +1,7 @@
 import { simple as acornSimpleWalk } from 'acorn-walk'
 
 import { BaseVisitor } from './baseVisitor.js'
-import type { Simple, SimpleVisitors } from './types.js'
+import type { SimpleVisitors } from './types.js'
 
 export function simple<T = unknown>(
   ast: Node,

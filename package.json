@@ -36,6 +36,7 @@
   "scripts": {
     "prettier": "prettier -w .",
     "lint": "eslint --ignore-pattern dist .",
+    "lint:fix": "eslint --ignore-pattern dist --fix .",
     "build": "duel --dirs",
     "test": "c8 --reporter=text --reporter=text-summary --reporter=lcov tsx --test --test-reporter=spec test/*.ts",
     "prepack": "npm run build"

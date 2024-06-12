@@ -96,9 +96,6 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
   ClassExpression<S>(_n: swc.ClassExpression, _st: S, _cb: Callback<S>) {
     // not implemented
   }
-  ClassMember<S>(_n: swc.ClassMember, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
   ClassMethod<S>(_n: swc.ClassMethod, _st: S, _cb: Callback<S>) {
     // not implemented
   }
@@ -120,13 +117,7 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
   DebuggerStatement<S>(_n: swc.DebuggerStatement, _st: S, _cb: Callback<S>) {
     // not implemented
   }
-  Declaration<S>(_n: swc.Declaration, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
   Decorator<S>(_n: swc.Decorator, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  DefaultDecl<S>(_n: swc.DefaultDecl, _st: S, _cb: Callback<S>) {
     // not implemented
   }
   DoWhileStatement<S>(_n: swc.DoWhileStatement, _st: S, _cb: Callback<S>) {
@@ -156,10 +147,7 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
   ExportNamespaceSpecifier<S>(_n: swc.ExportNamespaceSpecifier, _st: S, _cb: Callback<S>) {
     // not implemented
   }
-  ExportSpecifier<S>(_n: swc.ExportSpecifier, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  Expression<S>(_n: swc.Expression, _st: S, _cb: Callback<S>) {
+  ExportSpecifier<S>(_n: swc.NamedExportSpecifier, _st: S, _cb: Callback<S>) {
     // not implemented
   }
   ExpressionStatement<S>(n: swc.ExpressionStatement, st: S, cb: Callback<S>) {
@@ -199,16 +187,13 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
   ImportNamespaceSpecifier<S>(_n: swc.ImportNamespaceSpecifier, _st: S, _cb: Callback<S>) {
     // not implemented
   }
-  ImportSpecifier<S>(_n: swc.ImportSpecifier, _st: S, _cb: Callback<S>) {
+  ImportSpecifier<S>(_n: swc.NamedImportSpecifier, _st: S, _cb: Callback<S>) {
     // not implemented
   }
   Invalid<S>(_n: swc.Invalid, _st: S, _cb: Callback<S>) {
     // not implemented
   }
   JSXAttribute<S>(_n: swc.JSXAttribute, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  JSXAttrValue<S>(_n: swc.JSXAttrValue, _st: S, _cb: Callback<S>) {
     // not implemented
   }
   JSXClosingElement<S>(_n: swc.JSXClosingElement, _st: S, _cb: Callback<S>) {
@@ -218,12 +203,6 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
     // not implemented
   }
   JSXElement<S>(_n: swc.JSXElement, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  JSXElementChild<S>(_n: swc.JSXElementChild, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  JSXElementName<S>(_n: swc.JSXElementName, _st: S, _cb: Callback<S>) {
     // not implemented
   }
   JSXEmptyExpression<S>(_n: swc.JSXEmptyExpression, _st: S, _cb: Callback<S>) {
@@ -262,9 +241,6 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
   LabeledStatement<S>(_n: swc.LabeledStatement, _st: S, _cb: Callback<S>) {
     // not implemented
   }
-  Literal<S>(_n: swc.Literal, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
   MemberExpression<S>(n: swc.MemberExpression, st: S, cb: Callback<S>) {
     cb(n.object, st)
     cb(n.property, st)
@@ -279,9 +255,6 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
     for (const stmt of n.body) {
       cb(stmt, st)
     }
-  }
-  ModuleDeclaration<S>(_n: swc.ModuleDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
   }
   NewExpression<S>(n: swc.NewExpression, st: S, cb: Callback<S>) {
     cb(n.callee, st)
@@ -306,9 +279,6 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
   ObjectPattern<S>(_n: swc.ObjectPattern, _st: S, _cb: Callback<S>) {
     // not implemented
   }
-  ObjectPatternProperty<S>(_n: swc.ObjectPatternProperty, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
   OptionalChainingExpression<S>(_n: swc.OptionalChainingExpression, _st: S, _cb: Callback<S>) {
     // not implemented
   }
@@ -318,9 +288,6 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
   ParenthesisExpression<S>(_n: swc.ParenthesisExpression, _st: S, _cb: Callback<S>) {
     // not implemented
   }
-  Pattern<S>(_n: swc.Pattern, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
   PrivateMethod<S>(_n: swc.PrivateMethod, _st: S, _cb: Callback<S>) {
     // not implemented
   }
@@ -328,12 +295,6 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
     // not implemented
   }
   PrivateProperty<S>(_n: swc.PrivateProperty, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  Property<S>(_n: swc.Property, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  PropertyName<S>(_n: swc.PropertyName, _st: S, _cb: Callback<S>) {
     // not implemented
   }
   RegExpLiteral<S>(_n: swc.RegExpLiteral, _st: S, _cb: Callback<S>) {
@@ -359,9 +320,6 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
     // not implemented
   }
   SpreadElement<S>(_n: swc.SpreadElement, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  Statement<S>(_n: swc.Statement, _st: S, _cb: Callback<S>) {
     // not implemented
   }
   StaticBlock<S>(_n: swc.StaticBlock, _st: S, _cb: Callback<S>) {
@@ -479,9 +437,6 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
   TsExternalModuleReference<S>(_n: swc.TsExternalModuleReference, _st: S, _cb: Callback<S>) {
     // not implemented
   }
-  TsFnParameter<S>(_n: swc.TsFnParameter, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
   TsFunctionType<S>(_n: swc.TsFunctionType, _st: S, _cb: Callback<S>) {
     // not implemented
   }
@@ -539,9 +494,6 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
   TsParameterProperty<S>(_n: swc.TsParameterProperty, _st: S, _cb: Callback<S>) {
     // not implemented
   }
-  TsParameterPropertyParameter<S>(_n: swc.TsParameterPropertyParameter, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
   TsParenthesizedType<S>(_n: swc.TsParenthesizedType, _st: S, _cb: Callback<S>) {
     // not implemented
   }
@@ -577,9 +529,6 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
       cb(n.typeParams, st)
     }
   }
-  TsType<S>(_n: swc.TsType, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
   TsTypeAnnotation<S>(n: swc.TsTypeAnnotation, st: S, cb: Callback<S>) {
     cb(n.typeAnnotation, st)
   }
@@ -600,9 +549,6 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
     }
   }
   TsTypeAssertion<S>(_n: swc.TsTypeAssertion, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  TsTypeElement<S>(_n: swc.TsTypeElement, _st: S, _cb: Callback<S>) {
     // not implemented
   }
   TsTypeLiteral<S>(_n: swc.TsTypeLiteral, _st: S, _cb: Callback<S>) {

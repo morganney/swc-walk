@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "composite": true
+  },
+  "extends": "./tsconfig.json",
+  "include": ["src", "test", "eslint.config.js"]
+}

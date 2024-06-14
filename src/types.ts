@@ -16,30 +16,31 @@ export interface Node extends swc.Node {
   span?: swc.Span
 }
 
-type AggregatedNode =
-  | swc.ClassMember
-  | swc.Declaration
-  | swc.DefaultDecl
-  | swc.ExportSpecifier
-  | swc.Expression
-  | swc.ImportSpecifier
-  | swc.JSXAttrValue
-  | swc.JSXElementChild
-  | swc.JSXElementName
-  | swc.Literal
-  | swc.ModuleDeclaration
-  | swc.ObjectPatternProperty
-  | swc.Pattern
-  | swc.Property
-  | swc.PropertyName
-  | swc.Statement
-  | swc.TsFnParameter
-  | swc.TsParameterPropertyParameter
-  | swc.TsType
-  | swc.TsTypeElement
+type AggregatedNode = {
+  ClassMember: swc.ClassMember
+  Declaration: swc.Declaration
+  DefaultDecl: swc.DefaultDecl
+  ExportSpecifier: swc.ExportSpecifier
+  Expression: swc.Expression
+  ImportSpecifier: swc.ImportSpecifier
+  JSXAttrValue: swc.JSXAttrValue
+  JSXElementChild: swc.JSXElementChild
+  JSXElementName: swc.JSXElementName
+  Literal: swc.Literal
+  ModuleDeclaration: swc.ModuleDeclaration
+  ObjectPatternProperty: swc.ObjectPatternProperty
+  Pattern: swc.Pattern
+  Property: swc.Property
+  PropertyName: swc.PropertyName
+  Statement: swc.Statement
+  TsFnParameter: swc.TsFnParameter
+  TsParameterPropertyParameter: swc.TsParameterPropertyParameter
+  TsType: swc.TsType
+  TsTypeElement: swc.TsTypeElement
+}
 
 export type AnyNode =
-  | AggregatedNode
+  | AggregatedNode[keyof AggregatedNode]
   | swc.CatchClause
   | swc.Decorator
   | swc.Import
@@ -80,6 +81,8 @@ export type RecursiveVisitors<State> = {
 }
 export type SimpleVisitors<State> = {
   [type in AnyNode['type']]?: (node: Extract<AnyNode, { type: type }>, state: State) => void
+} & {
+  [type in keyof AggregatedNode as `Aggregated${type}`]?: never //(node: AggregatedNode[type], state: State) => void
 }
 /**
  * does a 'simple' walk over a tree

@@ -7,8 +7,15 @@ export default tseslint.config(
   nodePlugin.configs['flat/recommended'],
   ...tseslint.configs.recommended,
   {
+    languageOptions: {
+      parserOptions: {
+        project: './tsconfig.meta.json',
+      },
+    },
     rules: {
       'no-console': 'error',
+      '@typescript-eslint/no-use-before-define': 'error',
+      '@typescript-eslint/no-duplicate-type-constituents': 'error',
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -49,5 +56,8 @@ export default tseslint.config(
         },
       ],
     },
+  },
+  {
+    ignores: ['dist', 'coverage', 'eslint.config.js'],
   },
 )

@@ -1,3 +1,4 @@
+import type { Node } from '@swc/types'
 import { simple as acornSimpleWalk } from 'acorn-walk'
 
 import { BaseVisitor } from './baseVisitor.js'

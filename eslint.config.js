@@ -5,11 +5,11 @@ import nodePlugin from 'eslint-plugin-n'
 export default tseslint.config(
   eslint.configs.recommended,
   nodePlugin.configs['flat/recommended'],
-  ...tseslint.configs.recommended,
+  ...tseslint.configs.strictTypeChecked,
   {
     languageOptions: {
       parserOptions: {
-        project: './tsconfig.meta.json',
+        project: './tsconfig.json',
       },
     },
     rules: {
@@ -55,6 +55,12 @@ export default tseslint.config(
           next: ['cjs-import', '*'],
         },
       ],
+    },
+  },
+  {
+    files: ['test/*'],
+    rules: {
+      '@typescript-eslint/no-floating-promises': 'off',
     },
   },
   {

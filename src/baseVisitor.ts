@@ -71,10 +71,8 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
   CallExpression<S>(n: swc.CallExpression, st: S, cb: Callback<S>) {
     cb(n.callee, st)
 
-    if (n.arguments) {
-      for (const arg of n.arguments) {
-        cb(arg.expression, st)
-      }
+    for (const arg of n.arguments) {
+      cb(arg.expression, st)
     }
 
     if (n.typeArguments) {
@@ -82,13 +80,11 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
     }
   }
   CatchClause<S>(n: swc.CatchClause, st: S, cb: Callback<S>) {
-    if (n) {
-      if (n.param) {
-        cb(n.param, st)
-      }
-
-      cb(n.body, st)
+    if (n.param) {
+      cb(n.param, st)
     }
+
+    cb(n.body, st)
   }
   ClassDeclaration<S>(_n: swc.ClassDeclaration, _st: S, _cb: Callback<S>) {
     // not implemented

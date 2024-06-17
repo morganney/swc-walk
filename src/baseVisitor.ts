@@ -45,28 +45,27 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
       cb(n.value, st)
     }
   }
-  AssignmentProperty<S>(_n: swc.AssignmentProperty, _st: S, _cb: Callback<S>) {
-    // not implemented
+  AssignmentProperty<S>(n: swc.AssignmentProperty, st: S, cb: Callback<S>) {
+    cb(n.value, st)
   }
-  AwaitExpression<S>(_n: swc.AwaitExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  AwaitExpression<S>(n: swc.AwaitExpression, st: S, cb: Callback<S>) {
+    cb(n.argument, st)
   }
-  BigIntLiteral<S>(_n: swc.BigIntLiteral, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  BinaryExpression<S>(_n: swc.BinaryExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  BigIntLiteral = ignore
+  BinaryExpression<S>(n: swc.BinaryExpression, st: S, cb: Callback<S>) {
+    cb(n.left, st)
+    cb(n.right, st)
   }
   BlockStatement<S>(n: swc.BlockStatement, st: S, cb: Callback<S>) {
     for (const stmt of n.stmts) {
       cb(stmt, st)
     }
   }
-  BooleanLiteral<S>(_n: swc.BooleanLiteral, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  BreakStatement<S>(_n: swc.BreakStatement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  BooleanLiteral = ignore
+  BreakStatement<S>(n: swc.BreakStatement, st: S, cb: Callback<S>) {
+    if (n.label) {
+      cb(n.label, st)
+    }
   }
   CallExpression<S>(n: swc.CallExpression, st: S, cb: Callback<S>) {
     cb(n.callee, st)
@@ -86,166 +85,400 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
 
     cb(n.body, st)
   }
-  ClassDeclaration<S>(_n: swc.ClassDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ClassDeclaration<S>(n: swc.ClassDeclaration, st: S, cb: Callback<S>) {
+    for (const decorator of n.decorators ?? []) {
+      cb(decorator, st)
+    }
+
+    cb(n.identifier, st)
+
+    for (const implement of n.implements) {
+      cb(implement, st)
+    }
+
+    if (n.superClass) {
+      cb(n.superClass, st)
+    }
+
+    if (n.superTypeParams) {
+      cb(n.superTypeParams, st)
+    }
+
+    if (n.typeParams) {
+      cb(n.typeParams, st)
+    }
+
+    for (const member of n.body) {
+      cb(member, st)
+    }
   }
-  ClassExpression<S>(_n: swc.ClassExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ClassExpression<S>(n: swc.ClassExpression, st: S, cb: Callback<S>) {
+    for (const decorator of n.decorators ?? []) {
+      cb(decorator, st)
+    }
+
+    if (n.identifier) {
+      cb(n.identifier, st)
+    }
+
+    for (const implement of n.implements) {
+      cb(implement, st)
+    }
+
+    if (n.superClass) {
+      cb(n.superClass, st)
+    }
+
+    if (n.superTypeParams) {
+      cb(n.superTypeParams, st)
+    }
+
+    if (n.typeParams) {
+      cb(n.typeParams, st)
+    }
+
+    for (const member of n.body) {
+      cb(member, st)
+    }
   }
-  ClassMethod<S>(_n: swc.ClassMethod, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ClassMethod<S>(n: swc.ClassMethod, st: S, cb: Callback<S>) {
+    cb(n.key, st)
+
+    for (const decorator of n.function.decorators ?? []) {
+      cb(decorator, st)
+    }
+
+    for (const param of n.function.params) {
+      cb(param, st)
+    }
+
+    if (n.function.returnType) {
+      cb(n.function.returnType, st)
+    }
+
+    if (n.function.typeParameters) {
+      cb(n.function.typeParameters, st)
+    }
+
+    if (n.function.body) {
+      cb(n.function.body, st)
+    }
   }
-  ClassProperty<S>(_n: swc.ClassProperty, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ClassProperty<S>(n: swc.ClassProperty, st: S, cb: Callback<S>) {
+    for (const decorator of n.decorators ?? []) {
+      cb(decorator, st)
+    }
+
+    cb(n.key, st)
+
+    if (n.typeAnnotation) {
+      cb(n.typeAnnotation, st)
+    }
+
+    if (n.value) {
+      cb(n.value, st)
+    }
   }
-  Computed<S>(_n: swc.ComputedPropName, _st: S, _cb: Callback<S>) {
-    // not implemented
+  Computed<S>(n: swc.ComputedPropName, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
   }
-  ConditionalExpression<S>(_n: swc.ConditionalExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ConditionalExpression<S>(n: swc.ConditionalExpression, st: S, cb: Callback<S>) {
+    cb(n.test, st)
+    cb(n.consequent, st)
+    cb(n.alternate, st)
   }
-  Constructor<S>(_n: swc.Constructor, _st: S, _cb: Callback<S>) {
-    // not implemented
+  Constructor<S>(n: swc.Constructor, st: S, cb: Callback<S>) {
+    cb(n.key, st)
+
+    for (const param of n.params) {
+      cb(param, st)
+    }
+
+    if (n.body) {
+      cb(n.body, st)
+    }
   }
-  ContinueStatement<S>(_n: swc.ContinueStatement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ContinueStatement<S>(n: swc.ContinueStatement, st: S, cb: Callback<S>) {
+    if (n.label) {
+      cb(n.label, st)
+    }
   }
-  DebuggerStatement<S>(_n: swc.DebuggerStatement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  DebuggerStatement = ignore
+  Decorator<S>(n: swc.Decorator, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
   }
-  Decorator<S>(_n: swc.Decorator, _st: S, _cb: Callback<S>) {
-    // not implemented
+  DoWhileStatement<S>(n: swc.DoWhileStatement, st: S, cb: Callback<S>) {
+    cb(n.body, st)
+    cb(n.test, st)
   }
-  DoWhileStatement<S>(_n: swc.DoWhileStatement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  EmptyStatement = ignore
+  ExportAllDeclaration<S>(n: swc.ExportAllDeclaration, st: S, cb: Callback<S>) {
+    cb(n.source, st)
+
+    if (n.asserts) {
+      cb(n.asserts, st)
+    }
   }
-  EmptyStatement<S>(_n: swc.EmptyStatement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ExportDeclaration<S>(n: swc.ExportDeclaration, st: S, cb: Callback<S>) {
+    cb(n.declaration, st)
   }
-  ExportAllDeclaration<S>(_n: swc.ExportAllDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ExportDefaultDeclaration<S>(n: swc.ExportDefaultDeclaration, st: S, cb: Callback<S>) {
+    cb(n.decl, st)
   }
-  ExportDeclaration<S>(_n: swc.ExportDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ExportDefaultExpression<S>(n: swc.ExportDefaultExpression, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
   }
-  ExportDefaultDeclaration<S>(_n: swc.ExportDefaultDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ExportDefaultSpecifier<S>(n: swc.ExportDefaultSpecifier, st: S, cb: Callback<S>) {
+    cb(n.exported, st)
   }
-  ExportDefaultExpression<S>(_n: swc.ExportDefaultExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ExportNamedDeclaration<S>(n: swc.ExportNamedDeclaration, st: S, cb: Callback<S>) {
+    for (const specifier of n.specifiers) {
+      cb(specifier, st)
+    }
+
+    if (n.source) {
+      cb(n.source, st)
+    }
+
+    if (n.asserts) {
+      cb(n.asserts, st)
+    }
   }
-  ExportDefaultSpecifier<S>(_n: swc.ExportDefaultSpecifier, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ExportNamespaceSpecifier<S>(n: swc.ExportNamespaceSpecifier, st: S, cb: Callback<S>) {
+    cb(n.name, st)
   }
-  ExportNamedDeclaration<S>(_n: swc.ExportNamedDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  ExportNamespaceSpecifier<S>(_n: swc.ExportNamespaceSpecifier, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  ExportSpecifier<S>(_n: swc.NamedExportSpecifier, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ExportSpecifier<S>(n: swc.NamedExportSpecifier, st: S, cb: Callback<S>) {
+    if (n.exported) {
+      cb(n.exported, st)
+    }
+
+    cb(n.orig, st)
   }
   ExpressionStatement<S>(n: swc.ExpressionStatement, st: S, cb: Callback<S>) {
     cb(n.expression, st)
   }
-  ForInStatement<S>(_n: swc.ForInStatement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ForInStatement<S>(n: swc.ForInStatement, st: S, cb: Callback<S>) {
+    cb(n.left, st)
+    cb(n.right, st)
+    cb(n.body, st)
   }
-  ForOfStatement<S>(_n: swc.ForOfStatement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ForOfStatement<S>(n: swc.ForOfStatement, st: S, cb: Callback<S>) {
+    cb(n.left, st)
+    cb(n.right, st)
+    cb(n.body, st)
   }
-  ForStatement<S>(_n: swc.ForStatement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ForStatement<S>(n: swc.ForStatement, st: S, cb: Callback<S>) {
+    if (n.init) {
+      cb(n.init, st)
+    }
+
+    if (n.test) {
+      cb(n.test, st)
+    }
+
+    if (n.update) {
+      cb(n.update, st)
+    }
+
+    cb(n.body, st)
   }
-  FunctionDeclaration<S>(_n: swc.FunctionDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
+  FunctionDeclaration<S>(n: swc.FunctionDeclaration, st: S, cb: Callback<S>) {
+    for (const decorator of n.decorators ?? []) {
+      cb(decorator, st)
+    }
+
+    cb(n.identifier, st)
+
+    for (const param of n.params) {
+      cb(param, st)
+    }
+
+    if (n.returnType) {
+      cb(n.returnType, st)
+    }
+
+    if (n.typeParameters) {
+      cb(n.typeParameters, st)
+    }
+
+    if (n.body) {
+      cb(n.body, st)
+    }
   }
-  FunctionExpression<S>(_n: swc.FunctionExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  FunctionExpression<S>(n: swc.FunctionExpression, st: S, cb: Callback<S>) {
+    for (const decorator of n.decorators ?? []) {
+      cb(decorator, st)
+    }
+
+    if (n.identifier) {
+      cb(n.identifier, st)
+    }
+
+    for (const param of n.params) {
+      cb(param, st)
+    }
+
+    if (n.returnType) {
+      cb(n.returnType, st)
+    }
+
+    if (n.typeParameters) {
+      cb(n.typeParameters, st)
+    }
+
+    if (n.body) {
+      cb(n.body, st)
+    }
   }
-  GetterProperty<S>(_n: swc.GetterProperty, _st: S, _cb: Callback<S>) {
-    // not implemented
+  GetterProperty<S>(n: swc.GetterProperty, st: S, cb: Callback<S>) {
+    cb(n.key, st)
+
+    if (n.typeAnnotation) {
+      cb(n.typeAnnotation, st)
+    }
+
+    if (n.body) {
+      cb(n.body, st)
+    }
   }
-  Identifier = ignore
-  IfStatement<S>(_n: swc.IfStatement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  Identifier(n: swc.Identifier, st: T, cb: Callback<T>) {
+    if ('typeAnnotation' in n && n.typeAnnotation) {
+      // @ts-expect-error -- typeAnnotation is not typed in Identifier
+      cb(n.typeAnnotation, st)
+    }
   }
-  Import<S>(_n: swc.Import, _st: S, _cb: Callback<S>) {
-    // not implemented
+  IfStatement<S>(n: swc.IfStatement, st: S, cb: Callback<S>) {
+    cb(n.test, st)
+    cb(n.consequent, st)
+
+    if (n.alternate) {
+      cb(n.alternate, st)
+    }
   }
-  ImportDeclaration<S>(_n: swc.ImportDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
+  Import = ignore
+  ImportDeclaration<S>(n: swc.ImportDeclaration, st: S, cb: Callback<S>) {
+    for (const specifier of n.specifiers) {
+      cb(specifier, st)
+    }
+
+    cb(n.source, st)
+
+    if (n.asserts) {
+      cb(n.asserts, st)
+    }
   }
-  ImportDefaultSpecifier<S>(_n: swc.ImportDefaultSpecifier, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ImportDefaultSpecifier<S>(n: swc.ImportDefaultSpecifier, st: S, cb: Callback<S>) {
+    cb(n.local, st)
   }
-  ImportNamespaceSpecifier<S>(_n: swc.ImportNamespaceSpecifier, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ImportNamespaceSpecifier<S>(n: swc.ImportNamespaceSpecifier, st: S, cb: Callback<S>) {
+    cb(n.local, st)
   }
-  ImportSpecifier<S>(_n: swc.NamedImportSpecifier, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ImportSpecifier<S>(n: swc.NamedImportSpecifier, st: S, cb: Callback<S>) {
+    if (n.imported) {
+      cb(n.imported, st)
+    }
+
+    cb(n.local, st)
   }
-  Invalid<S>(_n: swc.Invalid, _st: S, _cb: Callback<S>) {
-    // not implemented
+  Invalid = ignore
+  JSXAttribute<S>(n: swc.JSXAttribute, st: S, cb: Callback<S>) {
+    cb(n.name, st)
+
+    if (n.value) {
+      cb(n.value, st)
+    }
   }
-  JSXAttribute<S>(_n: swc.JSXAttribute, _st: S, _cb: Callback<S>) {
-    // not implemented
+  JSXClosingElement<S>(n: swc.JSXClosingElement, st: S, cb: Callback<S>) {
+    cb(n.name, st)
   }
-  JSXClosingElement<S>(_n: swc.JSXClosingElement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  JSXClosingFragment = ignore
+  JSXElement<S>(n: swc.JSXElement, st: S, cb: Callback<S>) {
+    cb(n.opening, st)
+
+    for (const child of n.children) {
+      cb(child, st)
+    }
+
+    if (n.closing) {
+      cb(n.closing, st)
+    }
   }
-  JSXClosingFragment<S>(_n: swc.JSXClosingFragment, _st: S, _cb: Callback<S>) {
-    // not implemented
+  JSXEmptyExpression = ignore
+  JSXExpressionContainer<S>(n: swc.JSXExpressionContainer, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
   }
-  JSXElement<S>(_n: swc.JSXElement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  JSXFragment<S>(n: swc.JSXFragment, st: S, cb: Callback<S>) {
+    cb(n.opening, st)
+
+    for (const child of n.children) {
+      cb(child, st)
+    }
+
+    cb(n.closing, st)
   }
-  JSXEmptyExpression<S>(_n: swc.JSXEmptyExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  JSXMemberExpression<S>(n: swc.JSXMemberExpression, st: S, cb: Callback<S>) {
+    cb(n.property, st)
+    cb(n.object, st)
   }
-  JSXExpressionContainer<S>(_n: swc.JSXExpressionContainer, _st: S, _cb: Callback<S>) {
-    // not implemented
+  JSXNamespacedName<S>(n: swc.JSXNamespacedName, st: S, cb: Callback<S>) {
+    cb(n.namespace, st)
+    cb(n.name, st)
   }
-  JSXFragment<S>(_n: swc.JSXFragment, _st: S, _cb: Callback<S>) {
-    // not implemented
+  JSXOpeningElement<S>(n: swc.JSXOpeningElement, st: S, cb: Callback<S>) {
+    cb(n.name, st)
+
+    for (const attr of n.attributes) {
+      cb(attr, st)
+    }
+
+    if (n.typeArguments) {
+      cb(n.typeArguments, st)
+    }
   }
-  JSXMemberExpression<S>(_n: swc.JSXMemberExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  JSXOpeningFragment = ignore
+  JSXSpreadChild<S>(n: swc.JSXSpreadChild, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
   }
-  JSXNamespacedName<S>(_n: swc.JSXNamespacedName, _st: S, _cb: Callback<S>) {
-    // not implemented
+  JSXText = ignore
+  KeyValuePatternProperty<S>(n: swc.KeyValuePatternProperty, st: S, cb: Callback<S>) {
+    cb(n.key, st)
+    cb(n.value, st)
   }
-  JSXOpeningElement<S>(_n: swc.JSXOpeningElement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  KeyValueProperty<S>(n: swc.KeyValueProperty, st: S, cb: Callback<S>) {
+    cb(n.key, st)
+    cb(n.value, st)
   }
-  JSXOpeningFragment<S>(_n: swc.JSXOpeningFragment, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  JSXSpreadChild<S>(_n: swc.JSXSpreadChild, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  JSXText<S>(_n: swc.JSXText, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  KeyValuePatternProperty<S>(_n: swc.KeyValuePatternProperty, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  KeyValueProperty<S>(_n: swc.KeyValueProperty, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  LabeledStatement<S>(_n: swc.LabeledStatement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  LabeledStatement<S>(n: swc.LabeledStatement, st: S, cb: Callback<S>) {
+    cb(n.label, st)
+    cb(n.body, st)
   }
   MemberExpression<S>(n: swc.MemberExpression, st: S, cb: Callback<S>) {
     cb(n.object, st)
     cb(n.property, st)
   }
-  MetaProperty<S>(_n: swc.MetaProperty, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  MethodProperty<S>(_n: swc.MethodProperty, _st: S, _cb: Callback<S>) {
-    // not implemented
+  MetaProperty = ignore
+  MethodProperty<S>(n: swc.MethodProperty, st: S, cb: Callback<S>) {
+    for (const decorator of n.decorators ?? []) {
+      cb(decorator, st)
+    }
+
+    cb(n.key, st)
+
+    for (const param of n.params) {
+      cb(param, st)
+    }
+
+    if (n.returnType) {
+      cb(n.returnType, st)
+    }
+
+    if (n.typeParameters) {
+      cb(n.typeParameters, st)
+    }
+
+    if (n.body) {
+      cb(n.body, st)
+    }
   }
   Module<S>(n: swc.Module, st: S, cb: Callback<S>) {
     for (const stmt of n.body) {
@@ -265,39 +498,83 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
       cb(n.typeArguments, st)
     }
   }
-  NullLiteral<S>(_n: swc.NullLiteral, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
+  NullLiteral = ignore
   NumericLiteral = ignore
-  ObjectExpression<S>(_n: swc.ObjectExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ObjectExpression<S>(n: swc.ObjectExpression, st: S, cb: Callback<S>) {
+    for (const property of n.properties) {
+      cb(property, st)
+    }
   }
-  ObjectPattern<S>(_n: swc.ObjectPattern, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ObjectPattern<S>(n: swc.ObjectPattern, st: S, cb: Callback<S>) {
+    for (const property of n.properties) {
+      cb(property, st)
+    }
+
+    if (n.typeAnnotation) {
+      cb(n.typeAnnotation, st)
+    }
   }
-  OptionalChainingExpression<S>(_n: swc.OptionalChainingExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  OptionalChainingExpression<S>(n: swc.OptionalChainingExpression, st: S, cb: Callback<S>) {
+    cb(n.base, st)
   }
-  Parameter<S>(_n: swc.Param, _st: S, _cb: Callback<S>) {
-    // not implemented
+  Parameter<S>(n: swc.Param, st: S, cb: Callback<S>) {
+    for (const decorator of n.decorators ?? []) {
+      cb(decorator, st)
+    }
+
+    cb(n.pat, st)
   }
-  ParenthesisExpression<S>(_n: swc.ParenthesisExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  ParenthesisExpression<S>(n: swc.ParenthesisExpression, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
   }
-  PrivateMethod<S>(_n: swc.PrivateMethod, _st: S, _cb: Callback<S>) {
-    // not implemented
+  PrivateMethod<S>(n: swc.PrivateMethod, st: S, cb: Callback<S>) {
+    cb(n.key, st)
+
+    for (const decorator of n.function.decorators ?? []) {
+      cb(decorator, st)
+    }
+
+    for (const param of n.function.params) {
+      cb(param, st)
+    }
+
+    if (n.function.returnType) {
+      cb(n.function.returnType, st)
+    }
+
+    if (n.function.typeParameters) {
+      cb(n.function.typeParameters, st)
+    }
+
+    if (n.function.body) {
+      cb(n.function.body, st)
+    }
   }
-  PrivateName<S>(_n: swc.PrivateName, _st: S, _cb: Callback<S>) {
-    // not implemented
+  PrivateName<S>(n: swc.PrivateName, st: S, cb: Callback<S>) {
+    cb(n.id, st)
   }
-  PrivateProperty<S>(_n: swc.PrivateProperty, _st: S, _cb: Callback<S>) {
-    // not implemented
+  PrivateProperty<S>(n: swc.PrivateProperty, st: S, cb: Callback<S>) {
+    for (const decorator of n.decorators ?? []) {
+      cb(decorator, st)
+    }
+
+    cb(n.key, st)
+
+    if (n.typeAnnotation) {
+      cb(n.typeAnnotation, st)
+    }
+
+    if (n.value) {
+      cb(n.value, st)
+    }
   }
-  RegExpLiteral<S>(_n: swc.RegExpLiteral, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  RestElement<S>(_n: swc.RestElement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  RegExpLiteral = ignore
+  RestElement<S>(n: swc.RestElement, st: S, cb: Callback<S>) {
+    cb(n.argument, st)
+
+    if (n.typeAnnotation) {
+      cb(n.typeAnnotation, st)
+    }
   }
   ReturnStatement<S>(n: swc.ReturnStatement, st: S, cb: Callback<S>) {
     if (n.argument) {
@@ -309,43 +586,66 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
       cb(stmt, st)
     }
   }
-  SequenceExpression<S>(_n: swc.SequenceExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  SequenceExpression<S>(n: swc.SequenceExpression, st: S, cb: Callback<S>) {
+    for (const expression of n.expressions) {
+      cb(expression, st)
+    }
   }
-  SetterProperty<S>(_n: swc.SetterProperty, _st: S, _cb: Callback<S>) {
-    // not implemented
+  SetterProperty<S>(n: swc.SetterProperty, st: S, cb: Callback<S>) {
+    cb(n.key, st)
+    cb(n.param, st)
+
+    if (n.body) {
+      cb(n.body, st)
+    }
   }
-  SpreadElement<S>(_n: swc.SpreadElement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  SpreadElement<S>(n: swc.SpreadElement, st: S, cb: Callback<S>) {
+    cb(n.arguments, st)
   }
-  StaticBlock<S>(_n: swc.StaticBlock, _st: S, _cb: Callback<S>) {
-    // not implemented
+  StaticBlock<S>(n: swc.StaticBlock, st: S, cb: Callback<S>) {
+    cb(n.body, st)
   }
   StringLiteral = ignore
-  Super<S>(_n: swc.Super, _st: S, _cb: Callback<S>) {
-    // not implemented
+  Super = ignore
+  SuperPropExpression<S>(n: swc.SuperPropExpression, st: S, cb: Callback<S>) {
+    cb(n.obj, st)
+    cb(n.property, st)
   }
-  SuperPropExpression<S>(_n: swc.SuperPropExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  SwitchCase<S>(n: swc.SwitchCase, st: S, cb: Callback<S>) {
+    if (n.test) {
+      cb(n.test, st)
+    }
+
+    for (const consequent of n.consequent) {
+      cb(consequent, st)
+    }
   }
-  SwitchCase<S>(_n: swc.SwitchCase, _st: S, _cb: Callback<S>) {
-    // not implemented
+  SwitchStatement<S>(n: swc.SwitchStatement, st: S, cb: Callback<S>) {
+    cb(n.discriminant, st)
+
+    for (const cases of n.cases) {
+      cb(cases, st)
+    }
   }
-  SwitchStatement<S>(_n: swc.SwitchStatement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TaggedTemplateExpression<S>(n: swc.TaggedTemplateExpression, st: S, cb: Callback<S>) {
+    cb(n.tag, st)
+    cb(n.template, st)
+
+    if (n.typeParameters) {
+      cb(n.typeParameters, st)
+    }
   }
-  TaggedTemplateExpression<S>(_n: swc.TaggedTemplateExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TemplateElement = ignore
+  TemplateLiteral<S>(n: swc.TemplateLiteral, st: S, cb: Callback<S>) {
+    for (const quasis of n.quasis) {
+      cb(quasis, st)
+    }
+
+    for (const expressions of n.expressions) {
+      cb(expressions, st)
+    }
   }
-  TemplateElement<S>(_n: swc.TemplateElement, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  TemplateLiteral<S>(_n: swc.TemplateLiteral, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
-  ThisExpression<S>(_n: swc.ThisExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
+  ThisExpression = ignore
   ThrowStatement<S>(n: swc.ThrowStatement, st: S, cb: Callback<S>) {
     cb(n.argument, st)
   }
@@ -403,113 +703,219 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
       cb(n.typeParams, st)
     }
   }
-  TsAsExpression<S>(_n: swc.TsAsExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsAsExpression<S>(n: swc.TsAsExpression, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
+    cb(n.typeAnnotation, st)
   }
-  TsCallSignatureDeclaration<S>(_n: swc.TsCallSignatureDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsCallSignatureDeclaration<S>(n: swc.TsCallSignatureDeclaration, st: S, cb: Callback<S>) {
+    for (const param of n.params) {
+      cb(param, st)
+    }
+
+    if (n.typeParams) {
+      cb(n.typeParams, st)
+    }
+
+    if (n.typeAnnotation) {
+      cb(n.typeAnnotation, st)
+    }
   }
-  TsConditionalType<S>(_n: swc.TsConditionalType, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsConditionalType<S>(n: swc.TsConditionalType, st: S, cb: Callback<S>) {
+    cb(n.checkType, st)
+    cb(n.extendsType, st)
+    cb(n.trueType, st)
+    cb(n.falseType, st)
   }
-  TsConstAssertion<S>(_n: swc.TsConstAssertion, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsConstAssertion<S>(n: swc.TsConstAssertion, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
   }
-  TsConstructorType<S>(_n: swc.TsConstructorType, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsConstructorType<S>(n: swc.TsConstructorType, st: S, cb: Callback<S>) {
+    for (const param of n.params) {
+      cb(param, st)
+    }
+
+    cb(n.typeAnnotation, st)
+
+    if (n.typeParams) {
+      cb(n.typeParams, st)
+    }
   }
-  TsConstructSignatureDeclaration<S>(_n: swc.TsConstructSignatureDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsConstructSignatureDeclaration<S>(n: swc.TsConstructSignatureDeclaration, st: S, cb: Callback<S>) {
+    for (const param of n.params) {
+      cb(param, st)
+    }
+
+    if (n.typeParams) {
+      cb(n.typeParams, st)
+    }
+
+    if (n.typeAnnotation) {
+      cb(n.typeAnnotation, st)
+    }
   }
-  TsEnumDeclaration<S>(_n: swc.TsEnumDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsEnumDeclaration<S>(n: swc.TsEnumDeclaration, st: S, cb: Callback<S>) {
+    cb(n.id, st)
+
+    for (const member of n.members) {
+      cb(member, st)
+    }
   }
-  TsEnumMember<S>(_n: swc.TsEnumMember, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsEnumMember<S>(n: swc.TsEnumMember, st: S, cb: Callback<S>) {
+    cb(n.id, st)
+
+    if (n.init) {
+      cb(n.init, st)
+    }
   }
-  TsExportAssignment<S>(_n: swc.TsExportAssignment, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsExportAssignment<S>(n: swc.TsExportAssignment, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
   }
-  TsExternalModuleReference<S>(_n: swc.TsExternalModuleReference, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsExternalModuleReference<S>(n: swc.TsExternalModuleReference, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
   }
-  TsFunctionType<S>(_n: swc.TsFunctionType, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsFunctionType<S>(n: swc.TsFunctionType, st: S, cb: Callback<S>) {
+    for (const param of n.params) {
+      cb(param, st)
+    }
+
+    cb(n.typeAnnotation, st)
+
+    if (n.typeParams) {
+      cb(n.typeParams, st)
+    }
   }
-  TsGetterSignature<S>(_n: swc.TsGetterSignature, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsGetterSignature<S>(n: swc.TsGetterSignature, st: S, cb: Callback<S>) {
+    cb(n.key, st)
+
+    if (n.typeAnnotation) {
+      cb(n.typeAnnotation, st)
+    }
   }
-  TsImportEqualsDeclaration<S>(_n: swc.TsImportEqualsDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsImportEqualsDeclaration<S>(n: swc.TsImportEqualsDeclaration, st: S, cb: Callback<S>) {
+    cb(n.id, st)
+    cb(n.moduleRef, st)
   }
-  TsImportType<S>(_n: swc.TsImportType, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsImportType<S>(n: swc.TsImportType, st: S, cb: Callback<S>) {
+    cb(n.argument, st)
+
+    if (n.qualifier) {
+      cb(n.qualifier, st)
+    }
+
+    if (n.typeArguments) {
+      cb(n.typeArguments, st)
+    }
   }
-  TsIndexedAccessType<S>(_n: swc.TsIndexedAccessType, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsIndexedAccessType<S>(n: swc.TsIndexedAccessType, st: S, cb: Callback<S>) {
+    cb(n.indexType, st)
+    cb(n.objectType, st)
   }
-  TsIndexSignature<S>(_n: swc.TsIndexSignature, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsIndexSignature<S>(n: swc.TsIndexSignature, st: S, cb: Callback<S>) {
+    for (const param of n.params) {
+      cb(param, st)
+    }
+
+    if (n.typeAnnotation) {
+      cb(n.typeAnnotation, st)
+    }
   }
-  TsInferType<S>(_n: swc.TsInferType, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsInferType<S>(n: swc.TsInferType, st: S, cb: Callback<S>) {
+    cb(n.typeParam, st)
   }
-  TsInstantiation<S>(_n: swc.TsInstantiation, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsInstantiation<S>(n: swc.TsInstantiation, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
+    cb(n.typeArguments, st)
   }
-  TsIntersectionType<S>(_n: swc.TsIntersectionType, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsIntersectionType<S>(n: swc.TsIntersectionType, st: S, cb: Callback<S>) {
+    for (const type of n.types) {
+      cb(type, st)
+    }
   }
-  TsLiteralType<S>(_n: swc.TsLiteralType, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsLiteralType<S>(n: swc.TsLiteralType, st: S, cb: Callback<S>) {
+    cb(n.literal, st)
   }
-  TsMappedType<S>(_n: swc.TsMappedType, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsMappedType<S>(n: swc.TsMappedType, st: S, cb: Callback<S>) {
+    if (n.nameType) {
+      cb(n.nameType, st)
+    }
+
+    if (n.typeAnnotation) {
+      cb(n.typeAnnotation, st)
+    }
+
+    cb(n.typeParam, st)
   }
-  TsMethodSignature<S>(_n: swc.TsMethodSignature, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsMethodSignature<S>(n: swc.TsMethodSignature, st: S, cb: Callback<S>) {
+    for (const param of n.params) {
+      cb(param, st)
+    }
+
+    cb(n.key, st)
+
+    if (n.typeAnn) {
+      cb(n.typeAnn, st)
+    }
+
+    if (n.typeParams) {
+      cb(n.typeParams, st)
+    }
   }
-  TsModuleBlock<S>(_n: swc.TsModuleBlock, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsModuleBlock<S>(n: swc.TsModuleBlock, st: S, cb: Callback<S>) {
+    for (const stmt of n.body) {
+      cb(stmt, st)
+    }
   }
-  TsModuleDeclaration<S>(_n: swc.TsModuleDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsModuleDeclaration<S>(n: swc.TsModuleDeclaration, st: S, cb: Callback<S>) {
+    cb(n.id, st)
+
+    if (n.body) {
+      cb(n.body, st)
+    }
   }
-  TsNamespaceDeclaration<S>(_n: swc.TsNamespaceDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsNamespaceDeclaration<S>(n: swc.TsNamespaceDeclaration, st: S, cb: Callback<S>) {
+    cb(n.id, st)
+    cb(n.body, st)
   }
-  TsNamespaceExportDeclaration<S>(_n: swc.TsNamespaceExportDeclaration, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsNamespaceExportDeclaration<S>(n: swc.TsNamespaceExportDeclaration, st: S, cb: Callback<S>) {
+    cb(n.id, st)
   }
-  TsNonNullExpression<S>(_n: swc.TsNonNullExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsNonNullExpression<S>(n: swc.TsNonNullExpression, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
   }
-  TsOptionalType<S>(_n: swc.TsOptionalType, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsOptionalType<S>(n: swc.TsOptionalType, st: S, cb: Callback<S>) {
+    cb(n.typeAnnotation, st)
   }
-  TsParameterProperty<S>(_n: swc.TsParameterProperty, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsParameterProperty<S>(n: swc.TsParameterProperty, st: S, cb: Callback<S>) {
+    for (const decorator of n.decorators ?? []) {
+      cb(decorator, st)
+    }
+
+    cb(n.param, st)
   }
-  TsParenthesizedType<S>(_n: swc.TsParenthesizedType, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsParenthesizedType<S>(n: swc.TsParenthesizedType, st: S, cb: Callback<S>) {
+    cb(n.typeAnnotation, st)
   }
-  TsQualifiedName<S>(_n: swc.TsQualifiedName, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsQualifiedName<S>(n: swc.TsQualifiedName, st: S, cb: Callback<S>) {
+    cb(n.left, st)
+    cb(n.right, st)
   }
-  TsRestType<S>(_n: swc.TsRestType, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsRestType<S>(n: swc.TsRestType, st: S, cb: Callback<S>) {
+    cb(n.typeAnnotation, st)
   }
-  TsSatisfiesExpression<S>(_n: swc.TsSatisfiesExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsSatisfiesExpression<S>(n: swc.TsSatisfiesExpression, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
+    cb(n.typeAnnotation, st)
   }
-  TsSetterSignature<S>(_n: swc.TsSetterSignature, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsSetterSignature<S>(n: swc.TsSetterSignature, st: S, cb: Callback<S>) {
+    cb(n.key, st)
+    cb(n.param, st)
   }
-  TsThisType<S>(_n: swc.TsThisType, _st: S, _cb: Callback<S>) {
-    // not implemented
-  }
+  TsThisType = ignore
   TsTupleElement<S>(n: swc.TsTupleElement, st: S, cb: Callback<S>) {
-    cb(n, st)
+    if (n.label) {
+      cb(n.label, st)
+    }
+
     cb(n.ty, st)
   }
   TsTupleType<S>(n: swc.TsTupleType, st: S, cb: Callback<S>) {
@@ -525,6 +931,7 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
       cb(n.typeParams, st)
     }
   }
+  TsType = ignore
   TsTypeAnnotation<S>(n: swc.TsTypeAnnotation, st: S, cb: Callback<S>) {
     cb(n.typeAnnotation, st)
   }
@@ -544,14 +951,18 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
       cb(param, st)
     }
   }
-  TsTypeAssertion<S>(_n: swc.TsTypeAssertion, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsTypeAssertion<S>(n: swc.TsTypeAssertion, st: S, cb: Callback<S>) {
+    cb(n.expression, st)
+    cb(n.typeAnnotation, st)
   }
-  TsTypeLiteral<S>(_n: swc.TsTypeLiteral, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsTypeElement = ignore
+  TsTypeLiteral<S>(n: swc.TsTypeLiteral, st: S, cb: Callback<S>) {
+    for (const member of n.members) {
+      cb(member, st)
+    }
   }
-  TsTypeOperator<S>(_n: swc.TsTypeOperator, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsTypeOperator<S>(n: swc.TsTypeOperator, st: S, cb: Callback<S>) {
+    cb(n.typeAnnotation, st)
   }
   TsTypeParameterInstantiation<S>(n: swc.TsTypeParameterInstantiation, st: S, cb: Callback<S>) {
     for (const param of n.params) {
@@ -565,20 +976,30 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
       cb(n.typeParams, st)
     }
   }
-  TsTypePredicate<S>(_n: swc.TsTypePredicate, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsTypePredicate<S>(n: swc.TsTypePredicate, st: S, cb: Callback<S>) {
+    cb(n.paramName, st)
+
+    if (n.typeAnnotation) {
+      cb(n.typeAnnotation, st)
+    }
   }
-  TsTypeQuery<S>(_n: swc.TsTypeQuery, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsTypeQuery<S>(n: swc.TsTypeQuery, st: S, cb: Callback<S>) {
+    cb(n.exprName, st)
+
+    if (n.typeArguments) {
+      cb(n.typeArguments, st)
+    }
   }
-  TsUnionType<S>(_n: swc.TsUnionType, _st: S, _cb: Callback<S>) {
-    // not implemented
+  TsUnionType<S>(n: swc.TsUnionType, st: S, cb: Callback<S>) {
+    for (const type of n.types) {
+      cb(type, st)
+    }
   }
-  UnaryExpression<S>(_n: swc.UnaryExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  UnaryExpression<S>(n: swc.UnaryExpression, st: S, cb: Callback<S>) {
+    cb(n.argument, st)
   }
-  UpdateExpression<S>(_n: swc.UpdateExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  UpdateExpression<S>(n: swc.UpdateExpression, st: S, cb: Callback<S>) {
+    cb(n.argument, st)
   }
   VariableDeclaration<S>(n: swc.VariableDeclaration, st: S, cb: Callback<S>) {
     for (const decl of n.declarations) {
@@ -592,14 +1013,18 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
       cb(n.init, st)
     }
   }
-  WhileStatement<S>(_n: swc.WhileStatement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  WhileStatement<S>(n: swc.WhileStatement, st: S, cb: Callback<S>) {
+    cb(n.test, st)
+    cb(n.body, st)
   }
-  WithStatement<S>(_n: swc.WithStatement, _st: S, _cb: Callback<S>) {
-    // not implemented
+  WithStatement<S>(n: swc.WithStatement, st: S, cb: Callback<S>) {
+    cb(n.object, st)
+    cb(n.body, st)
   }
-  YieldExpression<S>(_n: swc.YieldExpression, _st: S, _cb: Callback<S>) {
-    // not implemented
+  YieldExpression<S>(n: swc.YieldExpression, st: S, cb: Callback<S>) {
+    if (n.argument) {
+      cb(n.argument, st)
+    }
   }
 }
 export default BaseVisitor

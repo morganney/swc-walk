@@ -7,5 +7,6 @@
     "outDir": "dist",
     "target": "ESNext"
   },
-  "include": ["src", "test", "eslint.config.js"]
+  "references": [{ "path": "./tsconfig.meta.json" }],
+  "include": ["src"]
 }

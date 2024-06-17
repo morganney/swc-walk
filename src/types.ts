@@ -20,9 +20,7 @@ type AggregatedNode = {
   ClassMember: swc.ClassMember
   Declaration: swc.Declaration
   DefaultDecl: swc.DefaultDecl
-  ExportSpecifier: swc.ExportSpecifier
   Expression: swc.Expression
-  ImportSpecifier: swc.ImportSpecifier
   JSXAttrValue: swc.JSXAttrValue
   JSXElementChild: swc.JSXElementChild
   JSXElementName: swc.JSXElementName

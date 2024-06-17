@@ -30,7 +30,7 @@
     "./package.json": "./package.json"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.2.0"
   },
   "engineStrict": true,
   "scripts": {
@@ -38,7 +38,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "build": "duel --dirs",
-    "test": "c8 --reporter=text --reporter=text-summary --reporter=lcov tsx --test --test-reporter=spec test/*.ts",
+    "test": "c8 --reporter=text --reporter=text-summary --reporter=lcov tsx --test --test-reporter=spec test/*.test.ts",
     "prepack": "npm run build"
   },
   "files": [

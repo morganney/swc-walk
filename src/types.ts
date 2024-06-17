@@ -97,6 +97,3 @@ export type Simple = <State>(
   base?: RecursiveVisitors<State>,
   state?: State,
 ) => void
-
-// emit
-export const toto = 1

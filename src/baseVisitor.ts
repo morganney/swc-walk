@@ -700,7 +700,8 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
   }
   TsKeywordType = ignore
   TsPropertySignature<S>(n: swc.TsPropertySignature, st: S, cb: Callback<S>) {
-    for (const param of n.params) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- params can be undefined
+    for (const param of n.params ?? []) {
       cb(param, st)
     }
 

@@ -34,9 +34,8 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
     cb(n.left, st)
     cb(n.right, st)
 
-    if (n.typeAnnotation) {
-      cb(n.typeAnnotation, st)
-    }
+    // could be wrongly inherited from swc.PatternBase (could not find a way to trigger this)
+    // if (n.typeAnnotation) { cb(n.typeAnnotation, st) }
   }
   AssignmentPatternProperty<S>(n: swc.AssignmentPatternProperty, st: S, cb: Callback<S>) {
     cb(n.key, st)
@@ -215,6 +214,10 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
   ExportAllDeclaration<S>(n: swc.ExportAllDeclaration, st: S, cb: Callback<S>) {
     cb(n.source, st)
 
+    // @ts-expect-error -- asserts is not typed in ExportAllDeclaration
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    n.asserts = n.asserts ?? n.with
+
     if (n.asserts) {
       cb(n.asserts, st)
     }
@@ -239,6 +242,10 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
     if (n.source) {
       cb(n.source, st)
     }
+
+    // @ts-expect-error -- asserts is not typed in ExportAllDeclaration
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    n.asserts = n.asserts ?? n.with
 
     if (n.asserts) {
       cb(n.asserts, st)
@@ -362,6 +369,10 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
     }
 
     cb(n.source, st)
+
+    // @ts-expect-error -- asserts is not typed in ExportAllDeclaration
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    n.asserts = n.asserts ?? n.with
 
     if (n.asserts) {
       cb(n.asserts, st)

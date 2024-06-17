@@ -47,7 +47,7 @@ export function expect(options: Test & { method: ReturnType<typeof mock.method> 
       assert.equal(
         options.method.mock.callCount(),
         times,
-        `Expected ${options.type} to be called ${times} times, but was called ${options.method.mock.callCount()} times.`,
+        `Expected ${options.type} to be called ${times.toString()} times, but was called ${options.method.mock.callCount().toString()} times.`,
       )
     },
   }

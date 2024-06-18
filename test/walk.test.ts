@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { reparseSync } from '@knighted/reparse'
+import { parseSync } from '@swc/core'
 
 import { simple } from '../src/walk.js'
 
@@ -15,7 +15,8 @@ const state: WalkState = {
 
 describe('swc-walk', () => {
   it('walks an swc ast', () => {
-    const ast = reparseSync(`
+    const ast = parseSync(
+      `
       let foo = bar = <baz>(p: baz): baz => {return p}
       const [a, b]: [number, number] = [1,2]
       const arrow = (arg: string) => {
@@ -27,7 +28,9 @@ describe('swc-walk', () => {
           return 'foo'
         }
       }
-    `)
+    `,
+      { syntax: 'typescript' },
+    )
 
     simple<WalkState>(
       ast,
@@ -62,7 +65,7 @@ describe('swc-walk', () => {
 
     let typeParameterDeclarationNodes = 0
 
-    simple(reparseSync(`type SetInputText = Dispatch<SetStateAction<string>>`), {
+    simple(parseSync(`type SetInputText = Dispatch<SetStateAction<string>>`, { syntax: 'typescript' }), {
       TsTypeAliasDeclaration(node) {
         assert.equal(node.type, 'TsTypeAliasDeclaration')
       },
@@ -79,7 +82,7 @@ describe('swc-walk', () => {
 
     let tsTypeParameterNodes = 0
 
-    simple(reparseSync('interface List<T extends S> extends U, V { items: T[] }'), {
+    simple(parseSync('interface List<T extends S> extends U, V { items: T[] }', { syntax: 'typescript' }), {
       TsArrayType(node) {
         assert.equal(node.type, 'TsArrayType')
       },

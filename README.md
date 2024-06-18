@@ -6,9 +6,6 @@
 
 Walk an AST from SWC and visit each node type.
 
-> [!WARNING]  
-> Not production ready, lots of AST nodes missing.
-
 ## Requirements
 
 - AST is as defined by [`@swc/types`](https://github.com/swc-project/swc/tree/main/packages/types).

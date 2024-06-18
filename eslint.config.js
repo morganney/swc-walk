@@ -16,6 +16,12 @@ export default tseslint.config(
       'no-console': 'error',
       '@typescript-eslint/no-use-before-define': 'error',
       '@typescript-eslint/no-duplicate-type-constituents': 'error',
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        {
+          allowNumber: true,
+        },
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -59,6 +65,11 @@ export default tseslint.config(
   },
   {
     files: ['test/*'],
+    languageOptions: {
+      parserOptions: {
+        project: './test/tsconfig.json',
+      },
+    },
     rules: {
       '@typescript-eslint/no-floating-promises': 'off',
     },

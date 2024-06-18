@@ -1,6 +1,8 @@
 import { mock } from 'node:test'
 import assert from 'node:assert'
+
 import { parseSync, type ParseOptions } from '@swc/core'
+
 import { simple } from '../src/walk.js'
 import { BaseVisitor } from '../src/baseVisitor.js'
 
@@ -47,7 +49,7 @@ export function expect(options: Test & { method: ReturnType<typeof mock.method> 
       assert.equal(
         options.method.mock.callCount(),
         times,
-        `Expected ${options.type} to be called ${times.toString()} times, but was called ${options.method.mock.callCount().toString()} times.`,
+        `Expected ${options.type} to be called ${times} times, but was called ${options.method.mock.callCount().toString()} times.`,
       )
     },
   }

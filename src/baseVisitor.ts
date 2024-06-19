@@ -656,6 +656,12 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
         cb(expressions, st)
       }
     }
+
+    if ('types' in n) {
+      for (const types of n.types) {
+        cb(types, st)
+      }
+    }
   }
   ThisExpression = ignore
   ThrowStatement<S>(n: swc.ThrowStatement, st: S, cb: Callback<S>) {

@@ -4,7 +4,7 @@ import type { Node, Callback, RecursiveVisitors } from './types.js'
 
 const ignore = <S>(_n: Node, _st: S, _cb: Callback<S>) => {}
 
-export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
+export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
   ArrayExpression<S>(n: swc.ArrayExpression, st: S, cb: Callback<S>) {
     for (const el of n.elements) {
       if (el) {
@@ -348,9 +348,8 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
       cb(n.body, st)
     }
   }
-  Identifier(n: swc.Identifier, st: T, cb: Callback<T>) {
+  Identifier<S>(n: swc.Identifier | swc.BindingIdentifier, st: S, cb: Callback<S>) {
     if ('typeAnnotation' in n && n.typeAnnotation) {
-      // @ts-expect-error -- typeAnnotation is not typed in Identifier
       cb(n.typeAnnotation, st)
     }
   }
@@ -647,13 +646,15 @@ export class BaseVisitor<T> implements Required<RecursiveVisitors<T>> {
     }
   }
   TemplateElement = ignore
-  TemplateLiteral<S>(n: swc.TemplateLiteral, st: S, cb: Callback<S>) {
+  TemplateLiteral<S>(n: swc.TemplateLiteral | swc.TsTemplateLiteralType, st: S, cb: Callback<S>) {
     for (const quasis of n.quasis) {
       cb(quasis, st)
     }
 
-    for (const expressions of n.expressions) {
-      cb(expressions, st)
+    if ('expressions' in n) {
+      for (const expressions of n.expressions) {
+        cb(expressions, st)
+      }
     }
   }
   ThisExpression = ignore

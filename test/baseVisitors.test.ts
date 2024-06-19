@@ -121,6 +121,7 @@ const tests: Array<Test> = [
   { type: 'TaggedTemplateExpression', code: 'foo<T>`bar ${baz}`' },
   { type: 'TemplateElement', code: 'foo`bar`' },
   { type: 'TemplateLiteral', code: 'foo`bar`' },
+  { type: 'TemplateLiteral', code: 'type foo = `${bar}`' },
   { type: 'ThisExpression', code: 'this' },
   { type: 'ThrowStatement', code: 'throw 1' },
   { type: 'TryStatement', code: 'try {} catch(e) {}' },

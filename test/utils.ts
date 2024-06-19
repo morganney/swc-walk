@@ -7,7 +7,7 @@ import { simple } from '../src/walk.js'
 import { BaseVisitor } from '../src/baseVisitor.js'
 
 export type Test = {
-  type: keyof BaseVisitor<unknown>
+  type: keyof BaseVisitor
   skip?: string
   code: string
   times?: number

@@ -1,17 +1,17 @@
 {
   "name": "swc-walk",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Walk an AST from SWC and visit each node type.",
   "main": "dist/esm/walk.js",
   "type": "module",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/esm/types.d.ts",
+        "types": "./dist/esm/walk.d.ts",
         "default": "./dist/esm/walk.js"
       },
       "require": {
-        "types": "./dist/cjs/types.d.cts",
+        "types": "./dist/cjs/walk.d.cts",
         "default": "./dist/cjs/walk.cjs"
       },
       "default": "./dist/esm/walk.js"

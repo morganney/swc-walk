@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 
 import { parseSync } from '@swc/core'
 
-import { simple } from '../src/walk.js'
+import { simple, ancestor } from '../src/walk.js'
 
 type WalkState = {
   [k: string]: string | number
@@ -96,5 +96,26 @@ describe('swc-walk', () => {
     })
 
     assert.equal(tsTypeParameterNodes, 1)
+  })
+
+  it('walks an swc ast with ancestors', () => {
+    const ast = parseSync(`function foo(): string { return 'bar' }`, { syntax: 'typescript' })
+
+    ancestor<WalkState>(
+      ast,
+      {
+        StringLiteral(node, st, ancestors) {
+          assert.equal(node.type, 'StringLiteral')
+          assert.equal(ancestors.length, 5)
+          assert.equal(ancestors[4].type, 'StringLiteral')
+          assert.equal(ancestors[3].type, 'ReturnStatement')
+          assert.equal(ancestors[2].type, 'BlockStatement')
+          assert.equal(ancestors[1].type, 'FunctionDeclaration')
+          assert.equal(ancestors[0].type, 'Module')
+        },
+      },
+      undefined,
+      state,
+    )
   })
 })

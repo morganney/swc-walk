@@ -4,6 +4,9 @@ import type { Node, Callback, RecursiveVisitors } from './types.js'
 
 const ignore = <S>(_n: Node, _st: S, _cb: Callback<S>) => {}
 
+/**
+ * @see https://github.com/swc-project/swc/blob/main/packages/core/src/Visitor.ts
+ */
 export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
   ArrayExpression<S>(n: swc.ArrayExpression, st: S, cb: Callback<S>) {
     for (const el of n.elements) {
@@ -34,8 +37,9 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
     cb(n.left, st)
     cb(n.right, st)
 
-    // could be wrongly inherited from swc.PatternBase (could not find a way to trigger this)
-    // if (n.typeAnnotation) { cb(n.typeAnnotation, st) }
+    if (n.typeAnnotation) {
+      cb(n.typeAnnotation, st)
+    }
   }
   AssignmentPatternProperty<S>(n: swc.AssignmentPatternProperty, st: S, cb: Callback<S>) {
     cb(n.key, st)
@@ -560,9 +564,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.function.body, st)
     }
   }
-  PrivateName<S>(n: swc.PrivateName, st: S, cb: Callback<S>) {
-    cb(n.id, st)
-  }
+  PrivateName = ignore
   PrivateProperty<S>(n: swc.PrivateProperty, st: S, cb: Callback<S>) {
     for (const decorator of n.decorators ?? []) {
       cb(decorator, st)
@@ -707,19 +709,10 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
   }
   TsKeywordType = ignore
   TsPropertySignature<S>(n: swc.TsPropertySignature, st: S, cb: Callback<S>) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- params can be undefined
-    for (const param of n.params ?? []) {
-      cb(param, st)
-    }
-
     cb(n.key, st)
 
     if (n.typeAnnotation) {
       cb(n.typeAnnotation, st)
-    }
-
-    if (n.typeParams) {
-      cb(n.typeParams, st)
     }
   }
   TsAsExpression<S>(n: swc.TsAsExpression, st: S, cb: Callback<S>) {

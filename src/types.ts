@@ -84,6 +84,17 @@ export type SimpleVisitors<State> = {
 } & {
   [type in keyof AggregatedNode as `Aggregated${type}`]?: never //(node: AggregatedNode[type], state: State) => void
 }
+export type AncestorVisitors<State> = {
+  [type in AnyNode['type']]?: (node: Extract<AnyNode, { type: type }>, state: State, ancestors: Node[]) => void
+} & {
+  [type in keyof AggregatedNode as `Aggregated${type}`]?: never //(node: AggregatedNode[type], state: State, ancestors: Node[]) => void
+}
+export type Ancestor = <State>(
+  node: Node,
+  visitors: AncestorVisitors<State>,
+  base?: RecursiveVisitors<State>,
+  state?: State,
+) => void
 /**
  * does a 'simple' walk over a tree
  * @param node the AST node to walk

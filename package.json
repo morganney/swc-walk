@@ -1,6 +1,6 @@
 {
   "name": "swc-walk",
-  "version": "1.0.0-rc.3",
+  "version": "1.0.0",
   "description": "Walk an AST from SWC and visit each node type.",
   "main": "dist/esm/walk.js",
   "type": "module",
@@ -48,36 +48,34 @@
     "swc",
     "ast",
     "walk",
-    "acorn-walk",
-    "traverse",
     "visitor",
-    "node",
-    "type"
+    "traverse",
+    "acorn-walk"
   ],
   "author": "Morgan Ney <morganney@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/morganney/swc-walk.git"
+    "url": "git+https://github.com/morganney/swc-walk.git"
   },
   "bugs": {
     "url": "https://github.com/morganney/swc-walk/issues"
   },
   "devDependencies": {
-    "@eslint/js": "^9.24.0",
-    "@knighted/duel": "^2.1.3",
+    "@eslint/js": "^9.34.0",
+    "@knighted/duel": "^2.1.5",
     "@knighted/dump": "^1.0.3",
     "@stylistic/eslint-plugin-js": "^2.1.0",
-    "@swc/core": "^1.11.21",
-    "@swc/types": "^0.1.21",
-    "@types/node": "^22.14.1",
+    "@swc/core": "^1.13.5",
+    "@swc/types": "^0.1.24",
+    "@types/node": "^24.3.0",
     "c8": "^10.1.3",
-    "eslint": "^9.24.0",
-    "eslint-plugin-n": "^17.8.1",
-    "prettier": "^3.3.0",
-    "tsx": "^4.19.3",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.30.1"
+    "eslint": "^9.34.0",
+    "eslint-plugin-n": "^17.21.3",
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.41.0"
   },
   "dependencies": {
     "acorn-walk": "^8.3.4"

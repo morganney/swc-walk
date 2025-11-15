@@ -1,6 +1,6 @@
 {
   "name": "swc-walk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Walk an AST from SWC and visit each node type.",
   "main": "dist/esm/walk.js",
   "type": "module",
@@ -34,6 +34,7 @@
   },
   "engineStrict": true,
   "scripts": {
+    "check-types": "tsc --noEmit",
     "prettier": "prettier -w .",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
@@ -62,20 +63,20 @@
     "url": "https://github.com/morganney/swc-walk/issues"
   },
   "devDependencies": {
-    "@eslint/js": "^9.34.0",
+    "@eslint/js": "^9.39.1",
     "@knighted/duel": "^2.1.5",
     "@knighted/dump": "^1.0.3",
     "@stylistic/eslint-plugin-js": "^2.1.0",
-    "@swc/core": "^1.13.5",
-    "@swc/types": "^0.1.24",
-    "@types/node": "^24.3.0",
+    "@swc/core": "^1.15.2",
+    "@swc/types": "^0.1.25",
+    "@types/node": "^24.10.1",
     "c8": "^10.1.3",
-    "eslint": "^9.34.0",
-    "eslint-plugin-n": "^17.21.3",
+    "eslint": "^9.39.1",
+    "eslint-plugin-n": "^17.23.1",
     "prettier": "^3.6.2",
-    "tsx": "^4.20.5",
-    "typescript": "^5.9.2",
-    "typescript-eslint": "^8.41.0"
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.4"
   },
   "dependencies": {
     "acorn-walk": "^8.3.4"

@@ -13,6 +13,11 @@ const tests: Array<Test> = [
   { type: 'AssignmentPatternProperty', code: 'const {a = 1} = {}' },
   {
     type: 'AssignmentProperty',
+    /**
+     * SWC only emits AssignmentProperty nodes for object literals that use
+     * default initializers. Destructuring defaults produce AssignmentPatternProperty,
+     * so we intentionally use this non-standard-looking snippet to cover the visitor.
+     */
     code: 'const foo = { a = 1 }',
   },
   { type: 'AwaitExpression', code: 'await foo()' },

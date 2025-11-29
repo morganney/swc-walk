@@ -13,8 +13,12 @@ const tests: Array<Test> = [
   { type: 'AssignmentPatternProperty', code: 'const {a = 1} = {}' },
   {
     type: 'AssignmentProperty',
-    code: '({ x = class { @dec y: any; } } = obj);',
-    skip: "could not find a valid code snippet for 'AssignmentProperty'",
+    /**
+     * SWC only emits AssignmentProperty nodes for object literals that use
+     * default initializers. Destructuring defaults produce AssignmentPatternProperty,
+     * so we intentionally use this non-standard-looking snippet to cover the visitor.
+     */
+    code: 'const foo = { a = 1 }',
   },
   { type: 'AwaitExpression', code: 'await foo()' },
   { type: 'BigIntLiteral', code: '1n' },
@@ -187,8 +191,8 @@ const tests: Array<Test> = [
   { type: 'WhileStatement', code: 'while (true) {}' },
   {
     type: 'WithStatement',
-    code: 'with (a) {}',
-    skip: 'could not find a way to run without the strict mode',
+    code: 'with (obj) { obj.foo }',
+    parserOptions: { syntax: 'ecmascript', isModule: false },
   },
   { type: 'YieldExpression', code: 'function* foo() { yield 1 }' },
 ]

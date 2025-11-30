@@ -1,7 +1,10 @@
 import { test } from 'node:test'
 import assert from 'node:assert'
 
-import BaseVisitor from '../src/baseVisitor.js'
+import { parseSync } from '@swc/core'
+
+import BaseVisitor from '#swc-walk/baseVisitor'
+import { assertNodeType, isNodeOfType, type Node } from '#swc-walk/types'
 import { type Test, expect, given } from './utils.js'
 
 const tests: Array<Test> = [
@@ -208,6 +211,68 @@ for (const options of tests) {
     expect(given(options)).toHaveBeenCalledTimes(options.times ?? 1)
   })
 }
+
+test('ArrowFunctionExpression visits parameters and return type', () => {
+  const program = parseSync('const arrow = (param: Foo): Bar => param', { syntax: 'typescript' })
+
+  assertNodeType(program, 'Module')
+
+  const declaration = program.body[0]
+
+  assertNodeType(declaration, 'VariableDeclaration')
+
+  const init = declaration.declarations[0].init
+
+  assert.ok(init)
+  assertNodeType(init, 'ArrowFunctionExpression')
+
+  const visitor = new BaseVisitor()
+  let paramVisited = false
+  let returnTypeVisited = false
+
+  visitor.ArrowFunctionExpression(init, undefined, node => {
+    if (node === init.params[0]) {
+      paramVisited = true
+    }
+
+    if (init.returnType && node === init.returnType) {
+      returnTypeVisited = true
+    }
+  })
+
+  assert.ok(paramVisited)
+  assert.ok(returnTypeVisited)
+})
+
+test('AssignmentProperty visits key before value', () => {
+  const program = parseSync('const value = { assignmentKey = init }', { syntax: 'typescript' })
+
+  assertNodeType(program, 'Module')
+
+  const declaration = program.body[0]
+
+  assertNodeType(declaration, 'VariableDeclaration')
+
+  const init = declaration.declarations[0].init
+
+  assert.ok(init)
+  assertNodeType(init, 'ObjectExpression')
+
+  const assignmentProperty = init.properties.find(property => isNodeOfType(property, 'AssignmentProperty'))
+
+  assert.ok(assignmentProperty)
+
+  const visitor = new BaseVisitor()
+  const visitedNodes: Node[] = []
+
+  visitor.AssignmentProperty(assignmentProperty, undefined, node => {
+    visitedNodes.push(node)
+  })
+
+  assert.equal(visitedNodes.length, 2)
+  assert.strictEqual(visitedNodes[0], assignmentProperty.key)
+  assert.strictEqual(visitedNodes[1], assignmentProperty.value)
+})
 
 test('all methods should been tested', () => {
   const methods = Object.getOwnPropertyNames(BaseVisitor.prototype).filter(method => method !== 'constructor')

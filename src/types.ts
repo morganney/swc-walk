@@ -1,21 +1,5 @@
 import type * as swc from '@swc/types'
 
-export interface Node extends swc.Node {
-  /**
-   * Not all SWC nodes with a `type` have a `span`.
-   * `SpreadElement` has one under the `spread` property.
-   * `JSXMemberExpression` has none.
-   * `JSXNamespacedName` has none.
-   * `KeyValuePatternProperty` has none.
-   * `AssignmentProperty` has none.
-   * `TsQualifiedName` has none.
-   *
-   * @TODO find a better way to type the node in general so visitors
-   * don't have to use `if` type narrowing checks on `span`.
-   */
-  span?: swc.Span
-}
-
 type AggregatedNode = {
   ClassMember: swc.ClassMember
   Declaration: swc.Declaration
@@ -63,6 +47,7 @@ export type AnyNode =
   | swc.TsFunctionType
   | swc.TsInterfaceBody
   | swc.TsIntersectionType
+  | swc.TsLiteral
   | swc.TsModuleBlock
   | swc.TsNamespaceDeclaration
   | swc.TsParameterProperty
@@ -75,17 +60,29 @@ export type AnyNode =
   | swc.TsUnionType
   | swc.VariableDeclarator
 
+type OptionalSpan<T> = T extends { span: swc.Span }
+  ? Omit<T, 'span'> & { span: swc.Span | undefined }
+  : T & { span?: swc.Span }
+
+/**
+ * Not all SWC nodes with a `type` have a `span` in practice.
+ * This wrapper mirrors runtime behavior without forcing consumers
+ * to defensively narrow `span` before accessing it.
+ */
+export type Node = OptionalSpan<AnyNode>
+export type NodeType = AnyNode['type']
+export type NodeByType<T extends NodeType> = Extract<Node, { type: T }>
 export type Callback<State> = (node: Node, state: State) => void
 export type RecursiveVisitors<State> = {
-  [type in AnyNode['type']]?: (node: Extract<AnyNode, { type: type }>, state: State, callback: Callback<State>) => void
+  [Type in NodeType]?: (node: NodeByType<Type>, state: State, callback: Callback<State>) => void
 }
 export type SimpleVisitors<State> = {
-  [type in AnyNode['type']]?: (node: Extract<AnyNode, { type: type }>, state: State) => void
+  [Type in NodeType]?: (node: NodeByType<Type>, state: State) => void
 } & {
   [type in keyof AggregatedNode as `Aggregated${type}`]?: never //(node: AggregatedNode[type], state: State) => void
 }
 export type AncestorVisitors<State> = {
-  [type in AnyNode['type']]?: (node: Extract<AnyNode, { type: type }>, state: State, ancestors: Node[]) => void
+  [Type in NodeType]?: (node: NodeByType<Type>, state: State, ancestors: Node[]) => void
 } & {
   [type in keyof AggregatedNode as `Aggregated${type}`]?: never //(node: AggregatedNode[type], state: State, ancestors: Node[]) => void
 }
@@ -108,3 +105,11 @@ export type Simple = <State>(
   base?: RecursiveVisitors<State>,
   state?: State,
 ) => void
+export function isNodeOfType<T extends NodeType>(node: swc.Node | undefined, type: T): node is NodeByType<T> {
+  return Boolean(node && node.type === type)
+}
+export function assertNodeType<T extends NodeType>(node: swc.Node, type: T): asserts node is NodeByType<T> {
+  if (!isNodeOfType(node, type)) {
+    throw new TypeError(`Expected node of type ${type}, received ${node.type}`)
+  }
+}

@@ -1,6 +1,4 @@
-import type * as swc from '@swc/types'
-
-import type { Node, Callback, RecursiveVisitors } from './types.js'
+import type { Node, Callback, NodeByType, RecursiveVisitors } from './types.js'
 
 const ignore = <S>(_n: Node, _st: S, _cb: Callback<S>) => {}
 
@@ -8,32 +6,40 @@ const ignore = <S>(_n: Node, _st: S, _cb: Callback<S>) => {}
  * @see https://github.com/swc-project/swc/blob/main/packages/core/src/Visitor.ts
  */
 export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
-  ArrayExpression<S>(n: swc.ArrayExpression, st: S, cb: Callback<S>) {
+  ArrayExpression<S>(n: NodeByType<'ArrayExpression'>, st: S, cb: Callback<S>) {
     for (const el of n.elements) {
       if (el) {
         cb(el.expression, st)
       }
     }
   }
-  ArrayPattern<S>(n: swc.ArrayPattern, st: S, cb: Callback<S>) {
+  ArrayPattern<S>(n: NodeByType<'ArrayPattern'>, st: S, cb: Callback<S>) {
     for (const el of n.elements) {
       if (el) {
         cb(el, st)
       }
     }
   }
-  ArrowFunctionExpression<S>(n: swc.ArrowFunctionExpression, st: S, cb: Callback<S>) {
+  ArrowFunctionExpression<S>(n: NodeByType<'ArrowFunctionExpression'>, st: S, cb: Callback<S>) {
+    for (const param of n.params) {
+      cb(param, st)
+    }
+
     cb(n.body, st)
+
+    if (n.returnType) {
+      cb(n.returnType, st)
+    }
 
     if (n.typeParameters) {
       cb(n.typeParameters, st)
     }
   }
-  AssignmentExpression<S>(n: swc.AssignmentExpression, st: S, cb: Callback<S>) {
+  AssignmentExpression<S>(n: NodeByType<'AssignmentExpression'>, st: S, cb: Callback<S>) {
     cb(n.left, st)
     cb(n.right, st)
   }
-  AssignmentPattern<S>(n: swc.AssignmentPattern, st: S, cb: Callback<S>) {
+  AssignmentPattern<S>(n: NodeByType<'AssignmentPattern'>, st: S, cb: Callback<S>) {
     cb(n.left, st)
     cb(n.right, st)
 
@@ -41,36 +47,37 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.typeAnnotation, st)
     }
   }
-  AssignmentPatternProperty<S>(n: swc.AssignmentPatternProperty, st: S, cb: Callback<S>) {
+  AssignmentPatternProperty<S>(n: NodeByType<'AssignmentPatternProperty'>, st: S, cb: Callback<S>) {
     cb(n.key, st)
 
     if (n.value) {
       cb(n.value, st)
     }
   }
-  AssignmentProperty<S>(n: swc.AssignmentProperty, st: S, cb: Callback<S>) {
+  AssignmentProperty<S>(n: NodeByType<'AssignmentProperty'>, st: S, cb: Callback<S>) {
+    cb(n.key, st)
     cb(n.value, st)
   }
-  AwaitExpression<S>(n: swc.AwaitExpression, st: S, cb: Callback<S>) {
+  AwaitExpression<S>(n: NodeByType<'AwaitExpression'>, st: S, cb: Callback<S>) {
     cb(n.argument, st)
   }
   BigIntLiteral = ignore
-  BinaryExpression<S>(n: swc.BinaryExpression, st: S, cb: Callback<S>) {
+  BinaryExpression<S>(n: NodeByType<'BinaryExpression'>, st: S, cb: Callback<S>) {
     cb(n.left, st)
     cb(n.right, st)
   }
-  BlockStatement<S>(n: swc.BlockStatement, st: S, cb: Callback<S>) {
+  BlockStatement<S>(n: NodeByType<'BlockStatement'>, st: S, cb: Callback<S>) {
     for (const stmt of n.stmts) {
       cb(stmt, st)
     }
   }
   BooleanLiteral = ignore
-  BreakStatement<S>(n: swc.BreakStatement, st: S, cb: Callback<S>) {
+  BreakStatement<S>(n: NodeByType<'BreakStatement'>, st: S, cb: Callback<S>) {
     if (n.label) {
       cb(n.label, st)
     }
   }
-  CallExpression<S>(n: swc.CallExpression, st: S, cb: Callback<S>) {
+  CallExpression<S>(n: NodeByType<'CallExpression'>, st: S, cb: Callback<S>) {
     cb(n.callee, st)
 
     for (const arg of n.arguments) {
@@ -81,14 +88,14 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.typeArguments, st)
     }
   }
-  CatchClause<S>(n: swc.CatchClause, st: S, cb: Callback<S>) {
+  CatchClause<S>(n: NodeByType<'CatchClause'>, st: S, cb: Callback<S>) {
     if (n.param) {
       cb(n.param, st)
     }
 
     cb(n.body, st)
   }
-  ClassDeclaration<S>(n: swc.ClassDeclaration, st: S, cb: Callback<S>) {
+  ClassDeclaration<S>(n: NodeByType<'ClassDeclaration'>, st: S, cb: Callback<S>) {
     for (const decorator of n.decorators ?? []) {
       cb(decorator, st)
     }
@@ -115,7 +122,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(member, st)
     }
   }
-  ClassExpression<S>(n: swc.ClassExpression, st: S, cb: Callback<S>) {
+  ClassExpression<S>(n: NodeByType<'ClassExpression'>, st: S, cb: Callback<S>) {
     for (const decorator of n.decorators ?? []) {
       cb(decorator, st)
     }
@@ -144,7 +151,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(member, st)
     }
   }
-  ClassMethod<S>(n: swc.ClassMethod, st: S, cb: Callback<S>) {
+  ClassMethod<S>(n: NodeByType<'ClassMethod'>, st: S, cb: Callback<S>) {
     cb(n.key, st)
 
     for (const decorator of n.function.decorators ?? []) {
@@ -167,7 +174,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.function.body, st)
     }
   }
-  ClassProperty<S>(n: swc.ClassProperty, st: S, cb: Callback<S>) {
+  ClassProperty<S>(n: NodeByType<'ClassProperty'>, st: S, cb: Callback<S>) {
     for (const decorator of n.decorators ?? []) {
       cb(decorator, st)
     }
@@ -182,15 +189,15 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.value, st)
     }
   }
-  Computed<S>(n: swc.ComputedPropName, st: S, cb: Callback<S>) {
+  Computed<S>(n: NodeByType<'Computed'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
   }
-  ConditionalExpression<S>(n: swc.ConditionalExpression, st: S, cb: Callback<S>) {
+  ConditionalExpression<S>(n: NodeByType<'ConditionalExpression'>, st: S, cb: Callback<S>) {
     cb(n.test, st)
     cb(n.consequent, st)
     cb(n.alternate, st)
   }
-  Constructor<S>(n: swc.Constructor, st: S, cb: Callback<S>) {
+  Constructor<S>(n: NodeByType<'Constructor'>, st: S, cb: Callback<S>) {
     cb(n.key, st)
 
     for (const param of n.params) {
@@ -201,21 +208,21 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.body, st)
     }
   }
-  ContinueStatement<S>(n: swc.ContinueStatement, st: S, cb: Callback<S>) {
+  ContinueStatement<S>(n: NodeByType<'ContinueStatement'>, st: S, cb: Callback<S>) {
     if (n.label) {
       cb(n.label, st)
     }
   }
   DebuggerStatement = ignore
-  Decorator<S>(n: swc.Decorator, st: S, cb: Callback<S>) {
+  Decorator<S>(n: NodeByType<'Decorator'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
   }
-  DoWhileStatement<S>(n: swc.DoWhileStatement, st: S, cb: Callback<S>) {
+  DoWhileStatement<S>(n: NodeByType<'DoWhileStatement'>, st: S, cb: Callback<S>) {
     cb(n.body, st)
     cb(n.test, st)
   }
   EmptyStatement = ignore
-  ExportAllDeclaration<S>(n: swc.ExportAllDeclaration, st: S, cb: Callback<S>) {
+  ExportAllDeclaration<S>(n: NodeByType<'ExportAllDeclaration'>, st: S, cb: Callback<S>) {
     cb(n.source, st)
 
     // @ts-expect-error -- asserts is not typed in ExportAllDeclaration
@@ -226,19 +233,19 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.asserts, st)
     }
   }
-  ExportDeclaration<S>(n: swc.ExportDeclaration, st: S, cb: Callback<S>) {
+  ExportDeclaration<S>(n: NodeByType<'ExportDeclaration'>, st: S, cb: Callback<S>) {
     cb(n.declaration, st)
   }
-  ExportDefaultDeclaration<S>(n: swc.ExportDefaultDeclaration, st: S, cb: Callback<S>) {
+  ExportDefaultDeclaration<S>(n: NodeByType<'ExportDefaultDeclaration'>, st: S, cb: Callback<S>) {
     cb(n.decl, st)
   }
-  ExportDefaultExpression<S>(n: swc.ExportDefaultExpression, st: S, cb: Callback<S>) {
+  ExportDefaultExpression<S>(n: NodeByType<'ExportDefaultExpression'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
   }
-  ExportDefaultSpecifier<S>(n: swc.ExportDefaultSpecifier, st: S, cb: Callback<S>) {
+  ExportDefaultSpecifier<S>(n: NodeByType<'ExportDefaultSpecifier'>, st: S, cb: Callback<S>) {
     cb(n.exported, st)
   }
-  ExportNamedDeclaration<S>(n: swc.ExportNamedDeclaration, st: S, cb: Callback<S>) {
+  ExportNamedDeclaration<S>(n: NodeByType<'ExportNamedDeclaration'>, st: S, cb: Callback<S>) {
     for (const specifier of n.specifiers) {
       cb(specifier, st)
     }
@@ -255,30 +262,30 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.asserts, st)
     }
   }
-  ExportNamespaceSpecifier<S>(n: swc.ExportNamespaceSpecifier, st: S, cb: Callback<S>) {
+  ExportNamespaceSpecifier<S>(n: NodeByType<'ExportNamespaceSpecifier'>, st: S, cb: Callback<S>) {
     cb(n.name, st)
   }
-  ExportSpecifier<S>(n: swc.NamedExportSpecifier, st: S, cb: Callback<S>) {
+  ExportSpecifier<S>(n: NodeByType<'ExportSpecifier'>, st: S, cb: Callback<S>) {
     if (n.exported) {
       cb(n.exported, st)
     }
 
     cb(n.orig, st)
   }
-  ExpressionStatement<S>(n: swc.ExpressionStatement, st: S, cb: Callback<S>) {
+  ExpressionStatement<S>(n: NodeByType<'ExpressionStatement'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
   }
-  ForInStatement<S>(n: swc.ForInStatement, st: S, cb: Callback<S>) {
+  ForInStatement<S>(n: NodeByType<'ForInStatement'>, st: S, cb: Callback<S>) {
     cb(n.left, st)
     cb(n.right, st)
     cb(n.body, st)
   }
-  ForOfStatement<S>(n: swc.ForOfStatement, st: S, cb: Callback<S>) {
+  ForOfStatement<S>(n: NodeByType<'ForOfStatement'>, st: S, cb: Callback<S>) {
     cb(n.left, st)
     cb(n.right, st)
     cb(n.body, st)
   }
-  ForStatement<S>(n: swc.ForStatement, st: S, cb: Callback<S>) {
+  ForStatement<S>(n: NodeByType<'ForStatement'>, st: S, cb: Callback<S>) {
     if (n.init) {
       cb(n.init, st)
     }
@@ -293,7 +300,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
 
     cb(n.body, st)
   }
-  FunctionDeclaration<S>(n: swc.FunctionDeclaration, st: S, cb: Callback<S>) {
+  FunctionDeclaration<S>(n: NodeByType<'FunctionDeclaration'>, st: S, cb: Callback<S>) {
     for (const decorator of n.decorators ?? []) {
       cb(decorator, st)
     }
@@ -316,7 +323,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.body, st)
     }
   }
-  FunctionExpression<S>(n: swc.FunctionExpression, st: S, cb: Callback<S>) {
+  FunctionExpression<S>(n: NodeByType<'FunctionExpression'>, st: S, cb: Callback<S>) {
     for (const decorator of n.decorators ?? []) {
       cb(decorator, st)
     }
@@ -341,7 +348,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.body, st)
     }
   }
-  GetterProperty<S>(n: swc.GetterProperty, st: S, cb: Callback<S>) {
+  GetterProperty<S>(n: NodeByType<'GetterProperty'>, st: S, cb: Callback<S>) {
     cb(n.key, st)
 
     if (n.typeAnnotation) {
@@ -352,12 +359,12 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.body, st)
     }
   }
-  Identifier<S>(n: swc.Identifier | swc.BindingIdentifier, st: S, cb: Callback<S>) {
+  Identifier<S>(n: NodeByType<'Identifier'>, st: S, cb: Callback<S>) {
     if ('typeAnnotation' in n && n.typeAnnotation) {
       cb(n.typeAnnotation, st)
     }
   }
-  IfStatement<S>(n: swc.IfStatement, st: S, cb: Callback<S>) {
+  IfStatement<S>(n: NodeByType<'IfStatement'>, st: S, cb: Callback<S>) {
     cb(n.test, st)
     cb(n.consequent, st)
 
@@ -366,7 +373,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
     }
   }
   Import = ignore
-  ImportDeclaration<S>(n: swc.ImportDeclaration, st: S, cb: Callback<S>) {
+  ImportDeclaration<S>(n: NodeByType<'ImportDeclaration'>, st: S, cb: Callback<S>) {
     for (const specifier of n.specifiers) {
       cb(specifier, st)
     }
@@ -381,13 +388,13 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.asserts, st)
     }
   }
-  ImportDefaultSpecifier<S>(n: swc.ImportDefaultSpecifier, st: S, cb: Callback<S>) {
+  ImportDefaultSpecifier<S>(n: NodeByType<'ImportDefaultSpecifier'>, st: S, cb: Callback<S>) {
     cb(n.local, st)
   }
-  ImportNamespaceSpecifier<S>(n: swc.ImportNamespaceSpecifier, st: S, cb: Callback<S>) {
+  ImportNamespaceSpecifier<S>(n: NodeByType<'ImportNamespaceSpecifier'>, st: S, cb: Callback<S>) {
     cb(n.local, st)
   }
-  ImportSpecifier<S>(n: swc.NamedImportSpecifier, st: S, cb: Callback<S>) {
+  ImportSpecifier<S>(n: NodeByType<'ImportSpecifier'>, st: S, cb: Callback<S>) {
     if (n.imported) {
       cb(n.imported, st)
     }
@@ -395,18 +402,18 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
     cb(n.local, st)
   }
   Invalid = ignore
-  JSXAttribute<S>(n: swc.JSXAttribute, st: S, cb: Callback<S>) {
+  JSXAttribute<S>(n: NodeByType<'JSXAttribute'>, st: S, cb: Callback<S>) {
     cb(n.name, st)
 
     if (n.value) {
       cb(n.value, st)
     }
   }
-  JSXClosingElement<S>(n: swc.JSXClosingElement, st: S, cb: Callback<S>) {
+  JSXClosingElement<S>(n: NodeByType<'JSXClosingElement'>, st: S, cb: Callback<S>) {
     cb(n.name, st)
   }
   JSXClosingFragment = ignore
-  JSXElement<S>(n: swc.JSXElement, st: S, cb: Callback<S>) {
+  JSXElement<S>(n: NodeByType<'JSXElement'>, st: S, cb: Callback<S>) {
     cb(n.opening, st)
 
     for (const child of n.children) {
@@ -418,10 +425,10 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
     }
   }
   JSXEmptyExpression = ignore
-  JSXExpressionContainer<S>(n: swc.JSXExpressionContainer, st: S, cb: Callback<S>) {
+  JSXExpressionContainer<S>(n: NodeByType<'JSXExpressionContainer'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
   }
-  JSXFragment<S>(n: swc.JSXFragment, st: S, cb: Callback<S>) {
+  JSXFragment<S>(n: NodeByType<'JSXFragment'>, st: S, cb: Callback<S>) {
     cb(n.opening, st)
 
     for (const child of n.children) {
@@ -430,15 +437,15 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
 
     cb(n.closing, st)
   }
-  JSXMemberExpression<S>(n: swc.JSXMemberExpression, st: S, cb: Callback<S>) {
+  JSXMemberExpression<S>(n: NodeByType<'JSXMemberExpression'>, st: S, cb: Callback<S>) {
     cb(n.property, st)
     cb(n.object, st)
   }
-  JSXNamespacedName<S>(n: swc.JSXNamespacedName, st: S, cb: Callback<S>) {
+  JSXNamespacedName<S>(n: NodeByType<'JSXNamespacedName'>, st: S, cb: Callback<S>) {
     cb(n.namespace, st)
     cb(n.name, st)
   }
-  JSXOpeningElement<S>(n: swc.JSXOpeningElement, st: S, cb: Callback<S>) {
+  JSXOpeningElement<S>(n: NodeByType<'JSXOpeningElement'>, st: S, cb: Callback<S>) {
     cb(n.name, st)
 
     for (const attr of n.attributes) {
@@ -450,28 +457,28 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
     }
   }
   JSXOpeningFragment = ignore
-  JSXSpreadChild<S>(n: swc.JSXSpreadChild, st: S, cb: Callback<S>) {
+  JSXSpreadChild<S>(n: NodeByType<'JSXSpreadChild'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
   }
   JSXText = ignore
-  KeyValuePatternProperty<S>(n: swc.KeyValuePatternProperty, st: S, cb: Callback<S>) {
+  KeyValuePatternProperty<S>(n: NodeByType<'KeyValuePatternProperty'>, st: S, cb: Callback<S>) {
     cb(n.key, st)
     cb(n.value, st)
   }
-  KeyValueProperty<S>(n: swc.KeyValueProperty, st: S, cb: Callback<S>) {
+  KeyValueProperty<S>(n: NodeByType<'KeyValueProperty'>, st: S, cb: Callback<S>) {
     cb(n.key, st)
     cb(n.value, st)
   }
-  LabeledStatement<S>(n: swc.LabeledStatement, st: S, cb: Callback<S>) {
+  LabeledStatement<S>(n: NodeByType<'LabeledStatement'>, st: S, cb: Callback<S>) {
     cb(n.label, st)
     cb(n.body, st)
   }
-  MemberExpression<S>(n: swc.MemberExpression, st: S, cb: Callback<S>) {
+  MemberExpression<S>(n: NodeByType<'MemberExpression'>, st: S, cb: Callback<S>) {
     cb(n.object, st)
     cb(n.property, st)
   }
   MetaProperty = ignore
-  MethodProperty<S>(n: swc.MethodProperty, st: S, cb: Callback<S>) {
+  MethodProperty<S>(n: NodeByType<'MethodProperty'>, st: S, cb: Callback<S>) {
     for (const decorator of n.decorators ?? []) {
       cb(decorator, st)
     }
@@ -494,12 +501,12 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.body, st)
     }
   }
-  Module<S>(n: swc.Module, st: S, cb: Callback<S>) {
+  Module<S>(n: NodeByType<'Module'>, st: S, cb: Callback<S>) {
     for (const stmt of n.body) {
       cb(stmt, st)
     }
   }
-  NewExpression<S>(n: swc.NewExpression, st: S, cb: Callback<S>) {
+  NewExpression<S>(n: NodeByType<'NewExpression'>, st: S, cb: Callback<S>) {
     cb(n.callee, st)
 
     if (n.arguments) {
@@ -514,12 +521,12 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
   }
   NullLiteral = ignore
   NumericLiteral = ignore
-  ObjectExpression<S>(n: swc.ObjectExpression, st: S, cb: Callback<S>) {
+  ObjectExpression<S>(n: NodeByType<'ObjectExpression'>, st: S, cb: Callback<S>) {
     for (const property of n.properties) {
       cb(property, st)
     }
   }
-  ObjectPattern<S>(n: swc.ObjectPattern, st: S, cb: Callback<S>) {
+  ObjectPattern<S>(n: NodeByType<'ObjectPattern'>, st: S, cb: Callback<S>) {
     for (const property of n.properties) {
       cb(property, st)
     }
@@ -528,20 +535,20 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.typeAnnotation, st)
     }
   }
-  OptionalChainingExpression<S>(n: swc.OptionalChainingExpression, st: S, cb: Callback<S>) {
+  OptionalChainingExpression<S>(n: NodeByType<'OptionalChainingExpression'>, st: S, cb: Callback<S>) {
     cb(n.base, st)
   }
-  Parameter<S>(n: swc.Param, st: S, cb: Callback<S>) {
+  Parameter<S>(n: NodeByType<'Parameter'>, st: S, cb: Callback<S>) {
     for (const decorator of n.decorators ?? []) {
       cb(decorator, st)
     }
 
     cb(n.pat, st)
   }
-  ParenthesisExpression<S>(n: swc.ParenthesisExpression, st: S, cb: Callback<S>) {
+  ParenthesisExpression<S>(n: NodeByType<'ParenthesisExpression'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
   }
-  PrivateMethod<S>(n: swc.PrivateMethod, st: S, cb: Callback<S>) {
+  PrivateMethod<S>(n: NodeByType<'PrivateMethod'>, st: S, cb: Callback<S>) {
     cb(n.key, st)
 
     for (const decorator of n.function.decorators ?? []) {
@@ -565,7 +572,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
     }
   }
   PrivateName = ignore
-  PrivateProperty<S>(n: swc.PrivateProperty, st: S, cb: Callback<S>) {
+  PrivateProperty<S>(n: NodeByType<'PrivateProperty'>, st: S, cb: Callback<S>) {
     for (const decorator of n.decorators ?? []) {
       cb(decorator, st)
     }
@@ -581,29 +588,29 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
     }
   }
   RegExpLiteral = ignore
-  RestElement<S>(n: swc.RestElement, st: S, cb: Callback<S>) {
+  RestElement<S>(n: NodeByType<'RestElement'>, st: S, cb: Callback<S>) {
     cb(n.argument, st)
 
     if (n.typeAnnotation) {
       cb(n.typeAnnotation, st)
     }
   }
-  ReturnStatement<S>(n: swc.ReturnStatement, st: S, cb: Callback<S>) {
+  ReturnStatement<S>(n: NodeByType<'ReturnStatement'>, st: S, cb: Callback<S>) {
     if (n.argument) {
       cb(n.argument, st)
     }
   }
-  Script<S>(n: swc.Script, st: S, cb: Callback<S>) {
+  Script<S>(n: NodeByType<'Script'>, st: S, cb: Callback<S>) {
     for (const stmt of n.body) {
       cb(stmt, st)
     }
   }
-  SequenceExpression<S>(n: swc.SequenceExpression, st: S, cb: Callback<S>) {
+  SequenceExpression<S>(n: NodeByType<'SequenceExpression'>, st: S, cb: Callback<S>) {
     for (const expression of n.expressions) {
       cb(expression, st)
     }
   }
-  SetterProperty<S>(n: swc.SetterProperty, st: S, cb: Callback<S>) {
+  SetterProperty<S>(n: NodeByType<'SetterProperty'>, st: S, cb: Callback<S>) {
     cb(n.key, st)
     cb(n.param, st)
 
@@ -611,19 +618,19 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.body, st)
     }
   }
-  SpreadElement<S>(n: swc.SpreadElement, st: S, cb: Callback<S>) {
+  SpreadElement<S>(n: NodeByType<'SpreadElement'>, st: S, cb: Callback<S>) {
     cb(n.arguments, st)
   }
-  StaticBlock<S>(n: swc.StaticBlock, st: S, cb: Callback<S>) {
+  StaticBlock<S>(n: NodeByType<'StaticBlock'>, st: S, cb: Callback<S>) {
     cb(n.body, st)
   }
   StringLiteral = ignore
   Super = ignore
-  SuperPropExpression<S>(n: swc.SuperPropExpression, st: S, cb: Callback<S>) {
+  SuperPropExpression<S>(n: NodeByType<'SuperPropExpression'>, st: S, cb: Callback<S>) {
     cb(n.obj, st)
     cb(n.property, st)
   }
-  SwitchCase<S>(n: swc.SwitchCase, st: S, cb: Callback<S>) {
+  SwitchCase<S>(n: NodeByType<'SwitchCase'>, st: S, cb: Callback<S>) {
     if (n.test) {
       cb(n.test, st)
     }
@@ -632,14 +639,14 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(consequent, st)
     }
   }
-  SwitchStatement<S>(n: swc.SwitchStatement, st: S, cb: Callback<S>) {
+  SwitchStatement<S>(n: NodeByType<'SwitchStatement'>, st: S, cb: Callback<S>) {
     cb(n.discriminant, st)
 
     for (const cases of n.cases) {
       cb(cases, st)
     }
   }
-  TaggedTemplateExpression<S>(n: swc.TaggedTemplateExpression, st: S, cb: Callback<S>) {
+  TaggedTemplateExpression<S>(n: NodeByType<'TaggedTemplateExpression'>, st: S, cb: Callback<S>) {
     cb(n.tag, st)
     cb(n.template, st)
 
@@ -648,7 +655,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
     }
   }
   TemplateElement = ignore
-  TemplateLiteral<S>(n: swc.TemplateLiteral | swc.TsTemplateLiteralType, st: S, cb: Callback<S>) {
+  TemplateLiteral<S>(n: NodeByType<'TemplateLiteral'>, st: S, cb: Callback<S>) {
     for (const quasis of n.quasis) {
       cb(quasis, st)
     }
@@ -666,10 +673,10 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
     }
   }
   ThisExpression = ignore
-  ThrowStatement<S>(n: swc.ThrowStatement, st: S, cb: Callback<S>) {
+  ThrowStatement<S>(n: NodeByType<'ThrowStatement'>, st: S, cb: Callback<S>) {
     cb(n.argument, st)
   }
-  TryStatement<S>(n: swc.TryStatement, st: S, cb: Callback<S>) {
+  TryStatement<S>(n: NodeByType<'TryStatement'>, st: S, cb: Callback<S>) {
     cb(n.block, st)
 
     if (n.handler) {
@@ -680,17 +687,17 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.finalizer, st)
     }
   }
-  TsArrayType<S>(n: swc.TsArrayType, st: S, cb: Callback<S>) {
+  TsArrayType<S>(n: NodeByType<'TsArrayType'>, st: S, cb: Callback<S>) {
     cb(n.elemType, st)
   }
-  TsExpressionWithTypeArguments<S>(n: swc.TsExpressionWithTypeArguments, st: S, cb: Callback<S>) {
+  TsExpressionWithTypeArguments<S>(n: NodeByType<'TsExpressionWithTypeArguments'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
 
     if (n.typeArguments) {
       cb(n.typeArguments, st)
     }
   }
-  TsInterfaceDeclaration<S>(n: swc.TsInterfaceDeclaration, st: S, cb: Callback<S>) {
+  TsInterfaceDeclaration<S>(n: NodeByType<'TsInterfaceDeclaration'>, st: S, cb: Callback<S>) {
     cb(n.id, st)
     cb(n.body, st)
 
@@ -702,24 +709,24 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.typeParams, st)
     }
   }
-  TsInterfaceBody<S>(n: swc.TsInterfaceBody, st: S, cb: Callback<S>) {
+  TsInterfaceBody<S>(n: NodeByType<'TsInterfaceBody'>, st: S, cb: Callback<S>) {
     for (const ele of n.body) {
       cb(ele, st)
     }
   }
   TsKeywordType = ignore
-  TsPropertySignature<S>(n: swc.TsPropertySignature, st: S, cb: Callback<S>) {
+  TsPropertySignature<S>(n: NodeByType<'TsPropertySignature'>, st: S, cb: Callback<S>) {
     cb(n.key, st)
 
     if (n.typeAnnotation) {
       cb(n.typeAnnotation, st)
     }
   }
-  TsAsExpression<S>(n: swc.TsAsExpression, st: S, cb: Callback<S>) {
+  TsAsExpression<S>(n: NodeByType<'TsAsExpression'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
     cb(n.typeAnnotation, st)
   }
-  TsCallSignatureDeclaration<S>(n: swc.TsCallSignatureDeclaration, st: S, cb: Callback<S>) {
+  TsCallSignatureDeclaration<S>(n: NodeByType<'TsCallSignatureDeclaration'>, st: S, cb: Callback<S>) {
     for (const param of n.params) {
       cb(param, st)
     }
@@ -732,16 +739,16 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.typeAnnotation, st)
     }
   }
-  TsConditionalType<S>(n: swc.TsConditionalType, st: S, cb: Callback<S>) {
+  TsConditionalType<S>(n: NodeByType<'TsConditionalType'>, st: S, cb: Callback<S>) {
     cb(n.checkType, st)
     cb(n.extendsType, st)
     cb(n.trueType, st)
     cb(n.falseType, st)
   }
-  TsConstAssertion<S>(n: swc.TsConstAssertion, st: S, cb: Callback<S>) {
+  TsConstAssertion<S>(n: NodeByType<'TsConstAssertion'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
   }
-  TsConstructorType<S>(n: swc.TsConstructorType, st: S, cb: Callback<S>) {
+  TsConstructorType<S>(n: NodeByType<'TsConstructorType'>, st: S, cb: Callback<S>) {
     for (const param of n.params) {
       cb(param, st)
     }
@@ -752,7 +759,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.typeParams, st)
     }
   }
-  TsConstructSignatureDeclaration<S>(n: swc.TsConstructSignatureDeclaration, st: S, cb: Callback<S>) {
+  TsConstructSignatureDeclaration<S>(n: NodeByType<'TsConstructSignatureDeclaration'>, st: S, cb: Callback<S>) {
     for (const param of n.params) {
       cb(param, st)
     }
@@ -765,27 +772,27 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.typeAnnotation, st)
     }
   }
-  TsEnumDeclaration<S>(n: swc.TsEnumDeclaration, st: S, cb: Callback<S>) {
+  TsEnumDeclaration<S>(n: NodeByType<'TsEnumDeclaration'>, st: S, cb: Callback<S>) {
     cb(n.id, st)
 
     for (const member of n.members) {
       cb(member, st)
     }
   }
-  TsEnumMember<S>(n: swc.TsEnumMember, st: S, cb: Callback<S>) {
+  TsEnumMember<S>(n: NodeByType<'TsEnumMember'>, st: S, cb: Callback<S>) {
     cb(n.id, st)
 
     if (n.init) {
       cb(n.init, st)
     }
   }
-  TsExportAssignment<S>(n: swc.TsExportAssignment, st: S, cb: Callback<S>) {
+  TsExportAssignment<S>(n: NodeByType<'TsExportAssignment'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
   }
-  TsExternalModuleReference<S>(n: swc.TsExternalModuleReference, st: S, cb: Callback<S>) {
+  TsExternalModuleReference<S>(n: NodeByType<'TsExternalModuleReference'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
   }
-  TsFunctionType<S>(n: swc.TsFunctionType, st: S, cb: Callback<S>) {
+  TsFunctionType<S>(n: NodeByType<'TsFunctionType'>, st: S, cb: Callback<S>) {
     for (const param of n.params) {
       cb(param, st)
     }
@@ -796,18 +803,18 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.typeParams, st)
     }
   }
-  TsGetterSignature<S>(n: swc.TsGetterSignature, st: S, cb: Callback<S>) {
+  TsGetterSignature<S>(n: NodeByType<'TsGetterSignature'>, st: S, cb: Callback<S>) {
     cb(n.key, st)
 
     if (n.typeAnnotation) {
       cb(n.typeAnnotation, st)
     }
   }
-  TsImportEqualsDeclaration<S>(n: swc.TsImportEqualsDeclaration, st: S, cb: Callback<S>) {
+  TsImportEqualsDeclaration<S>(n: NodeByType<'TsImportEqualsDeclaration'>, st: S, cb: Callback<S>) {
     cb(n.id, st)
     cb(n.moduleRef, st)
   }
-  TsImportType<S>(n: swc.TsImportType, st: S, cb: Callback<S>) {
+  TsImportType<S>(n: NodeByType<'TsImportType'>, st: S, cb: Callback<S>) {
     cb(n.argument, st)
 
     if (n.qualifier) {
@@ -818,11 +825,11 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.typeArguments, st)
     }
   }
-  TsIndexedAccessType<S>(n: swc.TsIndexedAccessType, st: S, cb: Callback<S>) {
+  TsIndexedAccessType<S>(n: NodeByType<'TsIndexedAccessType'>, st: S, cb: Callback<S>) {
     cb(n.indexType, st)
     cb(n.objectType, st)
   }
-  TsIndexSignature<S>(n: swc.TsIndexSignature, st: S, cb: Callback<S>) {
+  TsIndexSignature<S>(n: NodeByType<'TsIndexSignature'>, st: S, cb: Callback<S>) {
     for (const param of n.params) {
       cb(param, st)
     }
@@ -831,22 +838,22 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.typeAnnotation, st)
     }
   }
-  TsInferType<S>(n: swc.TsInferType, st: S, cb: Callback<S>) {
+  TsInferType<S>(n: NodeByType<'TsInferType'>, st: S, cb: Callback<S>) {
     cb(n.typeParam, st)
   }
-  TsInstantiation<S>(n: swc.TsInstantiation, st: S, cb: Callback<S>) {
+  TsInstantiation<S>(n: NodeByType<'TsInstantiation'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
     cb(n.typeArguments, st)
   }
-  TsIntersectionType<S>(n: swc.TsIntersectionType, st: S, cb: Callback<S>) {
+  TsIntersectionType<S>(n: NodeByType<'TsIntersectionType'>, st: S, cb: Callback<S>) {
     for (const type of n.types) {
       cb(type, st)
     }
   }
-  TsLiteralType<S>(n: swc.TsLiteralType, st: S, cb: Callback<S>) {
+  TsLiteralType<S>(n: NodeByType<'TsLiteralType'>, st: S, cb: Callback<S>) {
     cb(n.literal, st)
   }
-  TsMappedType<S>(n: swc.TsMappedType, st: S, cb: Callback<S>) {
+  TsMappedType<S>(n: NodeByType<'TsMappedType'>, st: S, cb: Callback<S>) {
     if (n.nameType) {
       cb(n.nameType, st)
     }
@@ -857,7 +864,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
 
     cb(n.typeParam, st)
   }
-  TsMethodSignature<S>(n: swc.TsMethodSignature, st: S, cb: Callback<S>) {
+  TsMethodSignature<S>(n: NodeByType<'TsMethodSignature'>, st: S, cb: Callback<S>) {
     for (const param of n.params) {
       cb(param, st)
     }
@@ -872,70 +879,70 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.typeParams, st)
     }
   }
-  TsModuleBlock<S>(n: swc.TsModuleBlock, st: S, cb: Callback<S>) {
+  TsModuleBlock<S>(n: NodeByType<'TsModuleBlock'>, st: S, cb: Callback<S>) {
     for (const stmt of n.body) {
       cb(stmt, st)
     }
   }
-  TsModuleDeclaration<S>(n: swc.TsModuleDeclaration, st: S, cb: Callback<S>) {
+  TsModuleDeclaration<S>(n: NodeByType<'TsModuleDeclaration'>, st: S, cb: Callback<S>) {
     cb(n.id, st)
 
     if (n.body) {
       cb(n.body, st)
     }
   }
-  TsNamespaceDeclaration<S>(n: swc.TsNamespaceDeclaration, st: S, cb: Callback<S>) {
+  TsNamespaceDeclaration<S>(n: NodeByType<'TsNamespaceDeclaration'>, st: S, cb: Callback<S>) {
     cb(n.id, st)
     cb(n.body, st)
   }
-  TsNamespaceExportDeclaration<S>(n: swc.TsNamespaceExportDeclaration, st: S, cb: Callback<S>) {
+  TsNamespaceExportDeclaration<S>(n: NodeByType<'TsNamespaceExportDeclaration'>, st: S, cb: Callback<S>) {
     cb(n.id, st)
   }
-  TsNonNullExpression<S>(n: swc.TsNonNullExpression, st: S, cb: Callback<S>) {
+  TsNonNullExpression<S>(n: NodeByType<'TsNonNullExpression'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
   }
-  TsOptionalType<S>(n: swc.TsOptionalType, st: S, cb: Callback<S>) {
+  TsOptionalType<S>(n: NodeByType<'TsOptionalType'>, st: S, cb: Callback<S>) {
     cb(n.typeAnnotation, st)
   }
-  TsParameterProperty<S>(n: swc.TsParameterProperty, st: S, cb: Callback<S>) {
+  TsParameterProperty<S>(n: NodeByType<'TsParameterProperty'>, st: S, cb: Callback<S>) {
     for (const decorator of n.decorators ?? []) {
       cb(decorator, st)
     }
 
     cb(n.param, st)
   }
-  TsParenthesizedType<S>(n: swc.TsParenthesizedType, st: S, cb: Callback<S>) {
+  TsParenthesizedType<S>(n: NodeByType<'TsParenthesizedType'>, st: S, cb: Callback<S>) {
     cb(n.typeAnnotation, st)
   }
-  TsQualifiedName<S>(n: swc.TsQualifiedName, st: S, cb: Callback<S>) {
+  TsQualifiedName<S>(n: NodeByType<'TsQualifiedName'>, st: S, cb: Callback<S>) {
     cb(n.left, st)
     cb(n.right, st)
   }
-  TsRestType<S>(n: swc.TsRestType, st: S, cb: Callback<S>) {
+  TsRestType<S>(n: NodeByType<'TsRestType'>, st: S, cb: Callback<S>) {
     cb(n.typeAnnotation, st)
   }
-  TsSatisfiesExpression<S>(n: swc.TsSatisfiesExpression, st: S, cb: Callback<S>) {
+  TsSatisfiesExpression<S>(n: NodeByType<'TsSatisfiesExpression'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
     cb(n.typeAnnotation, st)
   }
-  TsSetterSignature<S>(n: swc.TsSetterSignature, st: S, cb: Callback<S>) {
+  TsSetterSignature<S>(n: NodeByType<'TsSetterSignature'>, st: S, cb: Callback<S>) {
     cb(n.key, st)
     cb(n.param, st)
   }
   TsThisType = ignore
-  TsTupleElement<S>(n: swc.TsTupleElement, st: S, cb: Callback<S>) {
+  TsTupleElement<S>(n: NodeByType<'TsTupleElement'>, st: S, cb: Callback<S>) {
     if (n.label) {
       cb(n.label, st)
     }
 
     cb(n.ty, st)
   }
-  TsTupleType<S>(n: swc.TsTupleType, st: S, cb: Callback<S>) {
+  TsTupleType<S>(n: NodeByType<'TsTupleType'>, st: S, cb: Callback<S>) {
     for (const el of n.elemTypes) {
       cb(el, st)
     }
   }
-  TsTypeAliasDeclaration<S>(n: swc.TsTypeAliasDeclaration, st: S, cb: Callback<S>) {
+  TsTypeAliasDeclaration<S>(n: NodeByType<'TsTypeAliasDeclaration'>, st: S, cb: Callback<S>) {
     cb(n.id, st)
     cb(n.typeAnnotation, st)
 
@@ -944,10 +951,10 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
     }
   }
   TsType = ignore
-  TsTypeAnnotation<S>(n: swc.TsTypeAnnotation, st: S, cb: Callback<S>) {
+  TsTypeAnnotation<S>(n: NodeByType<'TsTypeAnnotation'>, st: S, cb: Callback<S>) {
     cb(n.typeAnnotation, st)
   }
-  TsTypeParameter<S>(n: swc.TsTypeParameter, st: S, cb: Callback<S>) {
+  TsTypeParameter<S>(n: NodeByType<'TsTypeParameter'>, st: S, cb: Callback<S>) {
     cb(n.name, st)
 
     if (n.constraint) {
@@ -958,82 +965,82 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
       cb(n.default, st)
     }
   }
-  TsTypeParameterDeclaration<S>(n: swc.TsTypeParameterDeclaration, st: S, cb: Callback<S>) {
+  TsTypeParameterDeclaration<S>(n: NodeByType<'TsTypeParameterDeclaration'>, st: S, cb: Callback<S>) {
     for (const param of n.parameters) {
       cb(param, st)
     }
   }
-  TsTypeAssertion<S>(n: swc.TsTypeAssertion, st: S, cb: Callback<S>) {
+  TsTypeAssertion<S>(n: NodeByType<'TsTypeAssertion'>, st: S, cb: Callback<S>) {
     cb(n.expression, st)
     cb(n.typeAnnotation, st)
   }
   TsTypeElement = ignore
-  TsTypeLiteral<S>(n: swc.TsTypeLiteral, st: S, cb: Callback<S>) {
+  TsTypeLiteral<S>(n: NodeByType<'TsTypeLiteral'>, st: S, cb: Callback<S>) {
     for (const member of n.members) {
       cb(member, st)
     }
   }
-  TsTypeOperator<S>(n: swc.TsTypeOperator, st: S, cb: Callback<S>) {
+  TsTypeOperator<S>(n: NodeByType<'TsTypeOperator'>, st: S, cb: Callback<S>) {
     cb(n.typeAnnotation, st)
   }
-  TsTypeParameterInstantiation<S>(n: swc.TsTypeParameterInstantiation, st: S, cb: Callback<S>) {
+  TsTypeParameterInstantiation<S>(n: NodeByType<'TsTypeParameterInstantiation'>, st: S, cb: Callback<S>) {
     for (const param of n.params) {
       cb(param, st)
     }
   }
-  TsTypeReference<S>(n: swc.TsTypeReference, st: S, cb: Callback<S>) {
+  TsTypeReference<S>(n: NodeByType<'TsTypeReference'>, st: S, cb: Callback<S>) {
     cb(n.typeName, st)
 
     if (n.typeParams) {
       cb(n.typeParams, st)
     }
   }
-  TsTypePredicate<S>(n: swc.TsTypePredicate, st: S, cb: Callback<S>) {
+  TsTypePredicate<S>(n: NodeByType<'TsTypePredicate'>, st: S, cb: Callback<S>) {
     cb(n.paramName, st)
 
     if (n.typeAnnotation) {
       cb(n.typeAnnotation, st)
     }
   }
-  TsTypeQuery<S>(n: swc.TsTypeQuery, st: S, cb: Callback<S>) {
+  TsTypeQuery<S>(n: NodeByType<'TsTypeQuery'>, st: S, cb: Callback<S>) {
     cb(n.exprName, st)
 
     if (n.typeArguments) {
       cb(n.typeArguments, st)
     }
   }
-  TsUnionType<S>(n: swc.TsUnionType, st: S, cb: Callback<S>) {
+  TsUnionType<S>(n: NodeByType<'TsUnionType'>, st: S, cb: Callback<S>) {
     for (const type of n.types) {
       cb(type, st)
     }
   }
-  UnaryExpression<S>(n: swc.UnaryExpression, st: S, cb: Callback<S>) {
+  UnaryExpression<S>(n: NodeByType<'UnaryExpression'>, st: S, cb: Callback<S>) {
     cb(n.argument, st)
   }
-  UpdateExpression<S>(n: swc.UpdateExpression, st: S, cb: Callback<S>) {
+  UpdateExpression<S>(n: NodeByType<'UpdateExpression'>, st: S, cb: Callback<S>) {
     cb(n.argument, st)
   }
-  VariableDeclaration<S>(n: swc.VariableDeclaration, st: S, cb: Callback<S>) {
+  VariableDeclaration<S>(n: NodeByType<'VariableDeclaration'>, st: S, cb: Callback<S>) {
     for (const decl of n.declarations) {
       cb(decl, st)
     }
   }
-  VariableDeclarator<S>(n: swc.VariableDeclarator, st: S, cb: Callback<S>) {
+  VariableDeclarator<S>(n: NodeByType<'VariableDeclarator'>, st: S, cb: Callback<S>) {
     cb(n.id, st)
 
     if (n.init) {
       cb(n.init, st)
     }
   }
-  WhileStatement<S>(n: swc.WhileStatement, st: S, cb: Callback<S>) {
+  WhileStatement<S>(n: NodeByType<'WhileStatement'>, st: S, cb: Callback<S>) {
     cb(n.test, st)
     cb(n.body, st)
   }
-  WithStatement<S>(n: swc.WithStatement, st: S, cb: Callback<S>) {
+  WithStatement<S>(n: NodeByType<'WithStatement'>, st: S, cb: Callback<S>) {
     cb(n.object, st)
     cb(n.body, st)
   }
-  YieldExpression<S>(n: swc.YieldExpression, st: S, cb: Callback<S>) {
+  YieldExpression<S>(n: NodeByType<'YieldExpression'>, st: S, cb: Callback<S>) {
     if (n.argument) {
       cb(n.argument, st)
     }

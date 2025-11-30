@@ -3,7 +3,6 @@ import { simple as acornSimpleWalk, ancestor as acornAncestor } from 'acorn-walk
 
 import { BaseVisitor } from './baseVisitor.js'
 import type { SimpleVisitors, AncestorVisitors } from './types.js'
-
 export function simple<T = unknown>(
   ast: Node,
   visitors: SimpleVisitors<T>,

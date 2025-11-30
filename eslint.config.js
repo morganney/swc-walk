@@ -2,7 +2,7 @@ import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import nodePlugin from 'eslint-plugin-n'
 
-export default tseslint.config(
+export default [
   eslint.configs.recommended,
   nodePlugin.configs['flat/recommended'],
   ...tseslint.configs.strictTypeChecked,
@@ -67,7 +67,7 @@ export default tseslint.config(
     files: ['test/*'],
     languageOptions: {
       parserOptions: {
-        project: './test/tsconfig.json',
+        project: './tsconfig.eslint.json',
       },
     },
     rules: {
@@ -86,4 +86,4 @@ export default tseslint.config(
   {
     ignores: ['dist', 'coverage', 'eslint.config.js'],
   },
-)
+]

@@ -3,7 +3,8 @@ import assert from 'node:assert/strict'
 
 import { parseSync } from '@swc/core'
 
-import { simple, ancestor } from '../src/walk.js'
+import { simple, ancestor } from '#swc-walk'
+import { assertNodeType, type Node } from '#swc-walk/types'
 
 type WalkState = {
   [k: string]: string | number
@@ -117,5 +118,62 @@ describe('swc-walk', () => {
       undefined,
       state,
     )
+  })
+
+  it('allows accessing node.span without manual narrowing', () => {
+    const program = parseSync(`type Foo = Namespace.Type`, { syntax: 'typescript' })
+
+    assertNodeType(program, 'Module')
+
+    const declaration = program.body[0]
+
+    assertNodeType(declaration, 'TsTypeAliasDeclaration')
+
+    const typeAnnotation = declaration.typeAnnotation
+
+    assertNodeType(typeAnnotation, 'TsTypeReference')
+
+    const qualifiedName = typeAnnotation.typeName
+
+    assertNodeType(qualifiedName, 'TsQualifiedName')
+
+    Reflect.deleteProperty(qualifiedName, 'span')
+
+    const spans: Array<Node['span']> = []
+
+    simple(program, {
+      TsQualifiedName(node) {
+        spans.push(node.span)
+      },
+    })
+
+    assert.ok(spans.length >= 1)
+    assert.ok(spans.some(span => span === undefined))
+  })
+
+  it('keeps spans accessible for nodes that normally include them', () => {
+    const program = parseSync(`function demo(value: string) { return value }`, { syntax: 'typescript' })
+    const spans: Array<Node['span']> = []
+
+    simple(program, {
+      ReturnStatement(node) {
+        spans.push(node.span)
+      },
+    })
+
+    assert.ok(spans.length >= 1)
+    assert.ok(spans.every(span => span !== undefined))
+  })
+
+  it('throws when assertNodeType receives the wrong node kind', () => {
+    const program = parseSync(`const answer = 42`, { syntax: 'typescript' })
+
+    assertNodeType(program, 'Module')
+
+    const declaration = program.body[0]
+
+    assert.throws(() => {
+      assertNodeType(declaration, 'ExpressionStatement')
+    }, /Expected node of type ExpressionStatement, received VariableDeclaration/)
   })
 })

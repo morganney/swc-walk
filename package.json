@@ -27,7 +27,23 @@
       },
       "default": "./dist/esm/baseVisitor.js"
     },
+    "./types": {
+      "import": {
+        "types": "./dist/esm/types.d.ts",
+        "default": "./dist/esm/types.js"
+      },
+      "require": {
+        "types": "./dist/cjs/types.d.cts",
+        "default": "./dist/cjs/types.cjs"
+      },
+      "default": "./dist/esm/types.js"
+    },
     "./package.json": "./package.json"
+  },
+  "imports": {
+    "#swc-walk": "./src/walk.ts",
+    "#swc-walk/baseVisitor": "./src/baseVisitor.ts",
+    "#swc-walk/types": "./src/types.ts"
   },
   "engines": {
     "node": ">=20.2.0"
@@ -64,7 +80,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
-    "@knighted/duel": "^2.1.5",
+    "@knighted/duel": "^2.1.6",
     "@knighted/dump": "^1.0.3",
     "@stylistic/eslint-plugin-js": "^2.1.0",
     "@swc/core": "^1.15.2",

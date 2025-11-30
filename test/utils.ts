@@ -3,8 +3,8 @@ import assert from 'node:assert'
 
 import { parseSync, type ParseOptions } from '@swc/core'
 
-import { simple } from '../src/walk.js'
-import { BaseVisitor } from '../src/baseVisitor.js'
+import { simple } from '#swc-walk'
+import BaseVisitor from '#swc-walk/baseVisitor'
 
 export type Test = {
   type: keyof BaseVisitor

@@ -139,6 +139,7 @@ describe('swc-walk', () => {
 
     // Simulate a missing 'span' property to test runtime behavior where span may be undefined.
     const deleted = Reflect.deleteProperty(qualifiedName, 'span')
+
     assert.ok(deleted, "Failed to delete 'span' property; object may be frozen or sealed")
     assert.strictEqual(qualifiedName.span, undefined, "'span' property should be undefined after deletion")
 

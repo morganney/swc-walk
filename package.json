@@ -46,7 +46,7 @@
     "#swc-walk/types": "./src/types.ts"
   },
   "engines": {
-    "node": ">=22.22.1"
+    "node": ">=22.21.1 <23 || >=24 <25"
   },
   "engineStrict": true,
   "scripts": {

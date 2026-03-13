@@ -50,7 +50,7 @@
   },
   "engineStrict": true,
   "scripts": {
-    "check-types": "tsc --noEmit",
+    "check-types": "tsc -p tsconfig.eslint.json",
     "prettier": "prettier -w .",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",

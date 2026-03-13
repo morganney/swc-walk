@@ -72,15 +72,6 @@ export default [
     },
     rules: {
       '@typescript-eslint/no-floating-promises': 'off',
-      'n/no-unsupported-features/node-builtins': [
-        'error',
-        {
-          ignores: [
-            // No longer experimental with v22.0.0
-            'test.describe',
-          ],
-        },
-      ],
     },
   },
   {

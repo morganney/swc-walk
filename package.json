@@ -1,6 +1,6 @@
 {
   "name": "swc-walk",
-  "version": "2.0.0-rc.1",
+  "version": "2.0.0",
   "description": "Walk an AST from SWC and visit each node type.",
   "main": "dist/esm/walk.js",
   "type": "module",
@@ -22,7 +22,7 @@
         "default": "./dist/esm/baseVisitor.js"
       },
       "require": {
-        "types": "./dist/cjs/baseVisistor.d.cts",
+        "types": "./dist/cjs/baseVisitor.d.cts",
         "default": "./dist/cjs/baseVisitor.cjs"
       },
       "default": "./dist/esm/baseVisitor.js"

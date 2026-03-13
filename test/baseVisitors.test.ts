@@ -274,6 +274,121 @@ test('AssignmentProperty visits key before value', () => {
   assert.strictEqual(visitedNodes[1], assignmentProperty.value)
 })
 
+test('AssignmentPattern visits typeAnnotation when present', () => {
+  const program = parseSync('function foo(a = 1) {}', { syntax: 'typescript' })
+  const annotatedProgram = parseSync('function bar(a: Foo) {}', { syntax: 'typescript' })
+
+  assertNodeType(program, 'Module')
+  assertNodeType(annotatedProgram, 'Module')
+
+  const declaration = program.body[0]
+  const annotatedDeclaration = annotatedProgram.body[0]
+
+  assertNodeType(declaration, 'FunctionDeclaration')
+  assertNodeType(annotatedDeclaration, 'FunctionDeclaration')
+
+  const param = declaration.params[0]
+  const annotatedParam = annotatedDeclaration.params[0]
+
+  assertNodeType(param, 'Parameter')
+  assertNodeType(annotatedParam, 'Parameter')
+  assertNodeType(param.pat, 'AssignmentPattern')
+  assertNodeType(annotatedParam.pat, 'Identifier')
+
+  if (!('typeAnnotation' in annotatedParam.pat)) {
+    assert.fail('Expected parameter identifier to include a typeAnnotation')
+  }
+
+  // SWC exposes Identifier.typeAnnotation with a broad union in @swc/types.
+  const typeAnnotation = annotatedParam.pat.typeAnnotation
+
+  assert.ok(typeAnnotation)
+
+  param.pat.typeAnnotation = typeAnnotation
+
+  const visitor = new BaseVisitor()
+  const visitedNodes: Node[] = []
+
+  visitor.AssignmentPattern(param.pat, undefined, node => {
+    visitedNodes.push(node)
+  })
+
+  assert.equal(visitedNodes.length, 3)
+  assert.strictEqual(visitedNodes[0], param.pat.left)
+  assert.strictEqual(visitedNodes[1], param.pat.right)
+  assert.strictEqual(visitedNodes[2], param.pat.typeAnnotation)
+})
+
+test('FunctionExpression visits decorators when present', () => {
+  const program = parseSync('const fn = function named() {}', { syntax: 'typescript' })
+  const decoratorProgram = parseSync('@dec class C {}', { syntax: 'typescript', decorators: true })
+
+  assertNodeType(program, 'Module')
+  assertNodeType(decoratorProgram, 'Module')
+
+  const declaration = program.body[0]
+  const decoratorDeclaration = decoratorProgram.body[0]
+
+  assertNodeType(declaration, 'VariableDeclaration')
+  assertNodeType(decoratorDeclaration, 'ClassDeclaration')
+
+  const init = declaration.declarations[0].init
+
+  assert.ok(init)
+  assertNodeType(init, 'FunctionExpression')
+  assert.ok(decoratorDeclaration.decorators)
+  assert.ok(decoratorDeclaration.decorators[0])
+
+  init.decorators = [decoratorDeclaration.decorators[0]]
+
+  const visitor = new BaseVisitor()
+  const visitedNodes: Node[] = []
+
+  visitor.FunctionExpression(init, undefined, node => {
+    visitedNodes.push(node)
+  })
+
+  assert.ok(visitedNodes.includes(decoratorDeclaration.decorators[0]))
+  assert.strictEqual(visitedNodes[0], decoratorDeclaration.decorators[0])
+})
+
+test('MethodProperty visits decorators when present', () => {
+  const program = parseSync('const obj = { method() {} }', { syntax: 'typescript' })
+  const decoratorProgram = parseSync('@dec class C {}', { syntax: 'typescript', decorators: true })
+
+  assertNodeType(program, 'Module')
+  assertNodeType(decoratorProgram, 'Module')
+
+  const declaration = program.body[0]
+  const decoratorDeclaration = decoratorProgram.body[0]
+
+  assertNodeType(declaration, 'VariableDeclaration')
+  assertNodeType(decoratorDeclaration, 'ClassDeclaration')
+
+  const init = declaration.declarations[0].init
+
+  assert.ok(init)
+  assertNodeType(init, 'ObjectExpression')
+  assert.ok(decoratorDeclaration.decorators)
+  assert.ok(decoratorDeclaration.decorators[0])
+
+  const methodProperty = init.properties.find(property => isNodeOfType(property, 'MethodProperty'))
+
+  assert.ok(methodProperty)
+
+  methodProperty.decorators = [decoratorDeclaration.decorators[0]]
+
+  const visitor = new BaseVisitor()
+  const visitedNodes: Node[] = []
+
+  visitor.MethodProperty(methodProperty, undefined, node => {
+    visitedNodes.push(node)
+  })
+
+  assert.ok(visitedNodes.includes(decoratorDeclaration.decorators[0]))
+  assert.strictEqual(visitedNodes[0], decoratorDeclaration.decorators[0])
+})
+
 test('all methods should been tested', () => {
   const methods = Object.getOwnPropertyNames(BaseVisitor.prototype).filter(method => method !== 'constructor')
 

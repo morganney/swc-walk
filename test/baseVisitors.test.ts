@@ -72,7 +72,7 @@ const tests: Array<Test> = [
   { type: 'GetterProperty', code: 'const foo = { get a(): string {} }' },
   { type: 'Identifier', code: 'a' },
   { type: 'IfStatement', code: 'if (true) {} else {}' },
-  { type: 'Import', code: 'import()' },
+  { type: 'Import', code: "import('mod')" },
   {
     type: 'ImportDeclaration',
     code: 'import "foo" assert { type: "any" }',

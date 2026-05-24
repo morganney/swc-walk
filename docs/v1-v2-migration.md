@@ -42,5 +42,6 @@ v2 supports:
 
 - Node.js 22.x
 - Node.js 24.x
+- Node.js 26.x
 
 If you are on Node.js 20, upgrade your runtime before adopting v2.

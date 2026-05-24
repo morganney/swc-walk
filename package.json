@@ -1,6 +1,6 @@
 {
   "name": "swc-walk",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Walk an AST from SWC and visit each node type.",
   "main": "dist/esm/walk.js",
   "type": "module",
@@ -46,7 +46,7 @@
     "#swc-walk/types": "./src/types.ts"
   },
   "engines": {
-    "node": ">=22.21.1 <23 || >=24 <25"
+    "node": ">=22.21.1 <23 || >=24 <25 || >=26 <27"
   },
   "engineStrict": true,
   "scripts": {
@@ -80,21 +80,26 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@knighted/duel": "^4.0.2",
-    "@stylistic/eslint-plugin-js": "^2.1.0",
-    "@swc/core": "^1.15.2",
-    "@swc/types": "^0.1.25",
-    "@types/node": "^24.10.1",
+    "@knighted/duel": "^4.1.0",
+    "@stylistic/eslint-plugin-js": "^4.4.1",
+    "@swc/core": "^1.15.40",
+    "@swc/types": "^0.1.26",
+    "@types/node": "^25.9.1",
     "c8": "^11.0.0",
-    "eslint": "^10.0.3",
-    "eslint-plugin-n": "^17.24.0",
+    "eslint": "^10.4.0",
+    "eslint-plugin-n": "^18.0.1",
     "prettier": "^3.6.2",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.0"
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.4"
   },
   "dependencies": {
     "acorn-walk": "^8.3.5"
+  },
+  "overrides": {
+    "c8": {
+      "yargs": ">17.7.2 <19"
+    }
   },
   "prettier": {
     "arrowParens": "avoid",

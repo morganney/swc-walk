@@ -8,7 +8,7 @@ Walk an AST from SWC and visit each node type.
 
 ## Requirements
 
-- Node.js 22.x or 24.x.
+- Node.js 22.x, 24.x, or 26.x.
 - AST is as defined by [`@swc/types`](https://github.com/swc-project/swc/tree/main/packages/types).
 
 ## Version Notes

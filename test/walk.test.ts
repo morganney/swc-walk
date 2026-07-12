@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { parseSync } from '@swc/core'
 
 import { simple, ancestor } from '#swc-walk'
-import { assertNodeType, type Node, type RecursiveVisitors } from '#swc-walk/types'
+import { assertNodeType, type Callback, type Node, type NodeByType, type RecursiveVisitors } from '#swc-walk/types'
 
 type WalkState = {
   [k: string]: string | number
@@ -303,6 +303,38 @@ describe('swc-walk', () => {
     assert.equal(overrideVisitorCalls, 1)
   })
 
+  it('preserves this binding for class-based base visitors', () => {
+    const ast = parseSync('foo', { syntax: 'typescript' })
+
+    class ClassBaseVisitor {
+      calls = 0
+
+      Module(node: NodeByType<'Module'>, st: WalkState, cb: Callback<WalkState>) {
+        this.calls++
+
+        for (const statement of node.body) {
+          cb(statement, st)
+        }
+      }
+
+      ExpressionStatement(node: NodeByType<'ExpressionStatement'>, st: WalkState, cb: Callback<WalkState>) {
+        this.calls++
+        cb(node.expression, st)
+      }
+
+      Identifier() {
+        this.calls++
+      }
+    }
+
+    const classBase = new ClassBaseVisitor()
+    const base: RecursiveVisitors<WalkState> = classBase
+
+    simple(ast, {}, base, state)
+
+    assert.equal(classBase.calls, 3)
+  })
+
   it('walks simple visitors in post-order (children before parent)', () => {
     const ast = parseSync('const value = foo + bar', { syntax: 'typescript' })
     const visited: string[] = []
@@ -380,6 +412,78 @@ describe('swc-walk', () => {
     simple(ast, {}, base, state)
 
     assert.deepEqual(visited, ['ExpressionStatement', 'Identifier'])
+  })
+
+  it('dispatches simple visitors by override type', () => {
+    const ast = parseSync('foo', { syntax: 'typescript' })
+    let expressionStatementVisits = 0
+    let identifierVisits = 0
+    const base: RecursiveVisitors<WalkState> = {
+      Module(node, st, cb) {
+        for (const statement of node.body) {
+          cb(statement, st, 'ExpressionStatement')
+        }
+      },
+      ExpressionStatement() {
+        // Intentionally empty.
+      },
+      Identifier() {
+        // Intentionally empty.
+      },
+    }
+
+    simple(
+      ast,
+      {
+        ExpressionStatement() {
+          expressionStatementVisits++
+        },
+        Identifier() {
+          identifierVisits++
+        },
+      },
+      base,
+      state,
+    )
+
+    assert.equal(expressionStatementVisits, 1)
+    assert.equal(identifierVisits, 0)
+  })
+
+  it('dispatches ancestor visitors by override type', () => {
+    const ast = parseSync('foo', { syntax: 'typescript' })
+    let expressionStatementVisits = 0
+    let identifierVisits = 0
+    const base: RecursiveVisitors<WalkState> = {
+      Module(node, st, cb) {
+        for (const statement of node.body) {
+          cb(statement, st, 'ExpressionStatement')
+        }
+      },
+      ExpressionStatement() {
+        // Intentionally empty.
+      },
+      Identifier() {
+        // Intentionally empty.
+      },
+    }
+
+    ancestor(
+      ast,
+      {
+        ExpressionStatement() {
+          expressionStatementVisits++
+        },
+        Identifier() {
+          identifierVisits++
+        },
+      },
+      base,
+      state,
+    )
+
+    assert.equal(expressionStatementVisits, 1)
+    assert.equal(identifierVisits, 0)
   })
 
   it('threads the same state object through simple and ancestor callbacks', () => {

@@ -60,9 +60,10 @@ export function simple<T = unknown>(
       throw new TypeError(`No base visitor found for ${overrideType ?? node.type}`)
     }
 
-    recursiveVisitor(node, walkState, callback)
+    recursiveVisitor.call(baseVisitor, node, walkState, callback)
 
-    const visitor = getSimpleVisitor(visitors, node.type)
+    const visitorType = overrideType ?? node.type
+    const visitor = getSimpleVisitor(visitors, visitorType)
 
     if (visitor) {
       visitor(node, walkState)
@@ -94,9 +95,10 @@ export function ancestor<T = unknown>(
       throw new TypeError(`No base visitor found for ${overrideType ?? node.type}`)
     }
 
-    recursiveVisitor(node, walkState, callback)
+    recursiveVisitor.call(baseVisitor, node, walkState, callback)
 
-    const visitor = getAncestorVisitor(visitors, node.type)
+    const visitorType = overrideType ?? node.type
+    const visitor = getAncestorVisitor(visitors, visitorType)
 
     if (visitor) {
       visitor(node, walkState, ancestors)

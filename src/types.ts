@@ -72,7 +72,7 @@ type OptionalSpan<T> = T extends { span: swc.Span }
 export type Node = OptionalSpan<AnyNode>
 export type NodeType = AnyNode['type']
 export type NodeByType<T extends NodeType> = Extract<Node, { type: T }>
-export type Callback<State> = (node: Node, state: State) => void
+export type Callback<State> = (node: Node, state: State, overrideType?: NodeType) => void
 export type RecursiveVisitors<State> = {
   [Type in NodeType]?: (node: NodeByType<Type>, state: State, callback: Callback<State>) => void
 }

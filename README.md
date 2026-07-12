@@ -14,10 +14,11 @@ Walk an AST from SWC and visit each node type.
 ## Version Notes
 
 - For v1 to v2 breaking changes, see [`docs/v1-v2-migration.md`](./docs/v1-v2-migration.md).
+- For v2 to v3 migration guidance, see [`docs/v2-v3-migration.md`](./docs/v2-v3-migration.md).
 
 ## Example
 
-`swc-walk` wraps [`acorn-walk`](https://github.com/acornjs/acorn/blob/master/acorn-walk/README.md) walkers.
+`swc-walk` provides a SWC-native walker API inspired by `acorn-walk`.
 
 ```ts
 import { simple } from 'swc-walk'

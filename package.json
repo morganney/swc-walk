@@ -1,6 +1,6 @@
 {
   "name": "swc-walk",
-  "version": "2.1.1",
+  "version": "3.0.0-rc.0",
   "description": "Walk an AST from SWC and visit each node type.",
   "main": "dist/esm/walk.js",
   "type": "module",
@@ -50,11 +50,11 @@
   },
   "engineStrict": true,
   "scripts": {
-    "check-types": "tsc -p tsconfig.eslint.json",
+    "check-types": "tsc -p tsconfig.json",
     "prettier": "prettier -w .",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "build": "duel --dirs",
+    "build": "duel --dirs --project tsconfig.build.json",
     "test": "c8 --reporter=text --reporter=text-summary --reporter=lcov tsx --test --test-reporter=spec test/*.test.ts",
     "prepack": "npm run build"
   },
@@ -66,8 +66,7 @@
     "ast",
     "walk",
     "visitor",
-    "traverse",
-    "acorn-walk"
+    "traverse"
   ],
   "author": "Morgan Ney <morganney@gmail.com>",
   "license": "MIT",
@@ -80,11 +79,11 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@knighted/duel": "^4.1.0",
+    "@knighted/duel": "^4.1.1",
     "@stylistic/eslint-plugin-js": "^4.4.1",
     "@swc/core": "^1.15.43",
     "@swc/types": "^0.1.27",
-    "@types/node": "^25.9.1",
+    "@types/node": "^26.1.1",
     "c8": "^11.0.0",
     "eslint": "^10.4.0",
     "eslint-plugin-n": "^18.0.1",
@@ -92,9 +91,6 @@
     "tsx": "^4.23.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.63.0"
-  },
-  "dependencies": {
-    "acorn-walk": "^8.3.5"
   },
   "overrides": {
     "c8": {
@@ -106,5 +102,10 @@
     "printWidth": 119,
     "semi": false,
     "singleQuote": true
+  },
+  "allowScripts": {
+    "@swc/core@1.15.43": true,
+    "esbuild@0.28.0": true,
+    "fsevents@2.3.3": true
   }
 }

@@ -18,13 +18,7 @@ The primary API shape remains the same:
 
 State passing is unchanged.
 
-Before (v2):
-
-```ts
-simple(ast, visitors, undefined, state)
-```
-
-After (v3):
+No code changes are required for typical usage:
 
 ```ts
 simple(ast, visitors, undefined, state)

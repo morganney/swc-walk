@@ -81,8 +81,8 @@
     "@eslint/js": "^10.0.1",
     "@knighted/duel": "^4.1.1",
     "@stylistic/eslint-plugin-js": "^4.4.1",
-    "@swc/core": "^1.15.43",
-    "@swc/types": "^0.1.27",
+    "@swc/core": "^1.16.13",
+    "@swc/types": "^0.1.28",
     "@types/node": "^26.1.1",
     "c8": "^12.0.0",
     "eslint": "^10.12.0",
@@ -104,8 +104,8 @@
     "singleQuote": true
   },
   "allowScripts": {
-    "@swc/core@1.15.43": true,
     "esbuild@0.28.0": true,
-    "fsevents@2.3.3": true
+    "fsevents@2.3.3": true,
+    "@swc/core@1.16.13": true
   }
 }

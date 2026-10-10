@@ -72,6 +72,11 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
     }
   }
   BooleanLiteral = ignore
+  FunctionBody<S>(n: NodeByType<'FunctionBody'>, st: S, cb: Callback<S>) {
+    for (const stmt of n.stmts) {
+      cb(stmt, st)
+    }
+  }
   BreakStatement<S>(n: NodeByType<'BreakStatement'>, st: S, cb: Callback<S>) {
     if (n.label) {
       cb(n.label, st)

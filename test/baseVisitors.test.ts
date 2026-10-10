@@ -67,6 +67,7 @@ const tests: Array<Test> = [
   { type: 'ForInStatement', code: 'for (const a in b) {}' },
   { type: 'ForOfStatement', code: 'for (const a of b) {}' },
   { type: 'ForStatement', code: 'for (let foo = 1 ;foo < 10; foo++) {}' },
+  { type: 'FunctionBody', code: 'function foo() { return 1 }' },
   { type: 'FunctionDeclaration', code: '@bar function foo<T>() {}' },
   { type: 'FunctionExpression', code: 'const foo = function<T>(param:T):void {}' },
   { type: 'GetterProperty', code: 'const foo = { get a(): string {} }' },

@@ -27,6 +27,7 @@ export type AnyNode =
   | AggregatedNode[keyof AggregatedNode]
   | swc.CatchClause
   | swc.Decorator
+  | (Omit<swc.BlockStatement, 'type'> & { type: 'FunctionBody' })
   | swc.Import
   | swc.JSXAttribute
   | swc.JSXClosingElement

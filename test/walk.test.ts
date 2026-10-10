@@ -110,7 +110,7 @@ describe('swc-walk', () => {
           assert.equal(ancestors.length, 5)
           assert.equal(ancestors[4].type, 'StringLiteral')
           assert.equal(ancestors[3].type, 'ReturnStatement')
-          assert.equal(ancestors[2].type, 'BlockStatement')
+          assert.equal(ancestors[2].type, 'FunctionBody')
           assert.equal(ancestors[1].type, 'FunctionDeclaration')
           assert.equal(ancestors[0].type, 'Module')
         },

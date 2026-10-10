@@ -84,13 +84,13 @@
     "@swc/core": "^1.15.43",
     "@swc/types": "^0.1.27",
     "@types/node": "^26.1.1",
-    "c8": "^11.0.0",
-    "eslint": "^10.4.0",
-    "eslint-plugin-n": "^18.0.1",
+    "c8": "^12.0.0",
+    "eslint": "^10.12.0",
+    "eslint-plugin-n": "^18.4.1",
     "prettier": "^3.6.2",
-    "tsx": "^4.23.0",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.63.0"
+    "typescript-eslint": "^8.71.1"
   },
   "overrides": {
     "c8": {

@@ -4,7 +4,7 @@ import assert from 'node:assert'
 import { parseSync } from '@swc/core'
 
 import BaseVisitor from '#swc-walk/baseVisitor'
-import { assertNodeType, isNodeOfType, type Node } from '#swc-walk/types'
+import { assertNodeType, isNodeOfType, type Node, type NodeByType } from '#swc-walk/types'
 import { type Test, expect, given } from './utils.js'
 
 const tests: Array<Test> = [
@@ -304,20 +304,23 @@ test('AssignmentPattern visits typeAnnotation when present', () => {
   const typeAnnotation = annotatedParam.pat.typeAnnotation
 
   assert.ok(typeAnnotation)
+  assertNodeType(typeAnnotation, 'TsTypeAnnotation')
 
-  param.pat.typeAnnotation = typeAnnotation
+  const pattern: NodeByType<'AssignmentPattern'> = param.pat
+
+  pattern.typeAnnotation = typeAnnotation
 
   const visitor = new BaseVisitor()
   const visitedNodes: Node[] = []
 
-  visitor.AssignmentPattern(param.pat, undefined, node => {
+  visitor.AssignmentPattern(pattern, undefined, node => {
     visitedNodes.push(node)
   })
 
   assert.equal(visitedNodes.length, 3)
-  assert.strictEqual(visitedNodes[0], param.pat.left)
-  assert.strictEqual(visitedNodes[1], param.pat.right)
-  assert.strictEqual(visitedNodes[2], param.pat.typeAnnotation)
+  assert.strictEqual(visitedNodes[0], pattern.left)
+  assert.strictEqual(visitedNodes[1], pattern.right)
+  assert.strictEqual(visitedNodes[2], pattern.typeAnnotation)
 })
 
 test('FunctionExpression visits decorators when present', () => {

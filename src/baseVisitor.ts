@@ -1,6 +1,27 @@
 import type { Node, Callback, NodeByType, RecursiveVisitors } from './types.js'
 
 const ignore = <S>(_n: Node, _st: S, _cb: Callback<S>) => {}
+const visitFunction = <S>(fn: NodeByType<'ClassMethod'>['function'], st: S, cb: Callback<S>) => {
+  for (const decorator of fn.decorators ?? []) {
+    cb(decorator, st)
+  }
+
+  for (const param of fn.params) {
+    cb(param, st)
+  }
+
+  if (fn.returnType) {
+    cb(fn.returnType, st)
+  }
+
+  if (fn.typeParameters) {
+    cb(fn.typeParameters, st)
+  }
+
+  if (fn.body) {
+    cb(fn.body, st)
+  }
+}
 
 /**
  * @see https://github.com/swc-project/swc/blob/main/packages/core/src/Visitor.ts
@@ -355,14 +376,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
   }
   GetterProperty<S>(n: NodeByType<'GetterProperty'>, st: S, cb: Callback<S>) {
     cb(n.key, st)
-
-    if (n.typeAnnotation) {
-      cb(n.typeAnnotation, st)
-    }
-
-    if (n.body) {
-      cb(n.body, st)
-    }
+    visitFunction(n.function, st, cb)
   }
   Identifier<S>(n: NodeByType<'Identifier'>, st: S, cb: Callback<S>) {
     if ('typeAnnotation' in n && n.typeAnnotation) {
@@ -617,11 +631,7 @@ export class BaseVisitor implements Required<RecursiveVisitors<unknown>> {
   }
   SetterProperty<S>(n: NodeByType<'SetterProperty'>, st: S, cb: Callback<S>) {
     cb(n.key, st)
-    cb(n.param, st)
-
-    if (n.body) {
-      cb(n.body, st)
-    }
+    visitFunction(n.function, st, cb)
   }
   SpreadElement<S>(n: NodeByType<'SpreadElement'>, st: S, cb: Callback<S>) {
     cb(n.arguments, st)

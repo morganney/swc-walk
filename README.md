@@ -9,7 +9,9 @@ Walk an AST from SWC and visit each node type.
 ## Requirements
 
 - Node.js 22.x, 24.x, or 26.x.
-- AST is as defined by [`@swc/types`](https://github.com/swc-project/swc/tree/main/packages/types).
+- v3 targets the AST emitted by `@swc/core` 1.16.13; use that version or a later release with a compatible AST shape.
+- Types are based on [`@swc/types`](https://github.com/swc-project/swc/tree/main/packages/types), with local corrections for function bodies and object accessors.
+- Older SWC AST shapes are not part of the v3 compatibility contract.
 
 ## Version Notes
 

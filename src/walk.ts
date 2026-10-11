@@ -87,7 +87,11 @@ export function ancestor<T = unknown>(
       return
     }
 
-    ancestors.push(node)
+    const isNewAncestor = node !== ancestors[ancestors.length - 1]
+
+    if (isNewAncestor) {
+      ancestors.push(node)
+    }
 
     const recursiveVisitor = getRecursiveVisitor(baseVisitor, node, overrideType)
 
@@ -104,7 +108,9 @@ export function ancestor<T = unknown>(
       visitor(node, walkState, ancestors)
     }
 
-    ancestors.pop()
+    if (isNewAncestor) {
+      ancestors.pop()
+    }
   }
 
   callback(ast, state as T)

@@ -1,6 +1,6 @@
 {
   "name": "swc-walk",
-  "version": "3.0.0-rc.0",
+  "version": "3.0.0",
   "description": "Walk an AST from SWC and visit each node type.",
   "main": "dist/esm/walk.js",
   "type": "module",
@@ -81,16 +81,16 @@
     "@eslint/js": "^10.0.1",
     "@knighted/duel": "^4.1.1",
     "@stylistic/eslint-plugin-js": "^4.4.1",
-    "@swc/core": "^1.15.43",
-    "@swc/types": "^0.1.27",
+    "@swc/core": "^1.16.13",
+    "@swc/types": "^0.1.28",
     "@types/node": "^26.1.1",
-    "c8": "^11.0.0",
-    "eslint": "^10.4.0",
-    "eslint-plugin-n": "^18.0.1",
+    "c8": "^12.0.0",
+    "eslint": "^10.12.0",
+    "eslint-plugin-n": "^18.4.1",
     "prettier": "^3.6.2",
-    "tsx": "^4.23.0",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.63.0"
+    "typescript-eslint": "^8.71.1"
   },
   "overrides": {
     "c8": {
@@ -104,8 +104,8 @@
     "singleQuote": true
   },
   "allowScripts": {
-    "@swc/core@1.15.43": true,
     "esbuild@0.28.0": true,
-    "fsevents@2.3.3": true
+    "fsevents@2.3.3": true,
+    "@swc/core@1.16.13": true
   }
 }

@@ -4,7 +4,14 @@ import assert from 'node:assert/strict'
 import { parseSync } from '@swc/core'
 
 import { simple, ancestor } from '#swc-walk'
-import { assertNodeType, type Callback, type Node, type NodeByType, type RecursiveVisitors } from '#swc-walk/types'
+import {
+  assertNodeType,
+  isNodeOfType,
+  type Callback,
+  type Node,
+  type NodeByType,
+  type RecursiveVisitors,
+} from '#swc-walk/types'
 
 type WalkState = {
   [k: string]: string | number
@@ -99,6 +106,149 @@ describe('swc-walk', () => {
     assert.equal(tsTypeParameterNodes, 1)
   })
 
+  it('exposes current function bodies through direct and nested node fields', () => {
+    const ast = parseSync(
+      `
+      function outer() { function nested() {} if (true) {} }
+      const fn = function () {}
+      const blockArrow = () => {}
+      const expressionArrow = () => value
+      class Example {
+        constructor() {}
+        method() {}
+        #method() {}
+        static {}
+      }
+      const object = { get value(): number { return 1 }, set value(input: number) { consume(input) }, method() {} }
+      `,
+      { syntax: 'typescript' },
+    )
+    const bodies: NodeByType<'FunctionBody'>[] = []
+    let expressionArrows = 0
+    let ordinaryBlocks = 0
+    let nestedBodies = 0
+    let visitedBodies = 0
+    let setterParameters = 0
+    let getterReturnTypes = 0
+    let accessorStatements = 0
+
+    function recordBody(body: NodeByType<'FunctionBody'> | undefined) {
+      assert.ok(body)
+      assert.equal(body.type, 'FunctionBody')
+      assert.ok(Array.isArray(body.stmts))
+      bodies.push(body)
+    }
+
+    simple(ast, {
+      FunctionDeclaration(node) {
+        assert.ok(isNodeOfType(node.body, 'FunctionBody'))
+        assert.ok(Array.isArray(node.body.stmts))
+        recordBody(node.body)
+      },
+      FunctionExpression(node) {
+        recordBody(node.body)
+      },
+      ArrowFunctionExpression(node) {
+        if (isNodeOfType(node.body, 'FunctionBody')) {
+          recordBody(node.body)
+        } else {
+          assertNodeType(node.body, 'Identifier')
+          expressionArrows++
+        }
+      },
+      Constructor(node) {
+        recordBody(node.body)
+      },
+      ClassMethod(node) {
+        recordBody(node.function.body)
+      },
+      PrivateMethod(node) {
+        recordBody(node.function.body)
+      },
+      GetterProperty(node) {
+        recordBody(node.function.body)
+        assert.ok(node.function.returnType)
+      },
+      SetterProperty(node) {
+        recordBody(node.function.body)
+        assert.equal(node.function.params.length, 1)
+      },
+      MethodProperty(node) {
+        recordBody(node.body)
+      },
+      FunctionBody(node) {
+        visitedBodies++
+        const statement = node.stmts[0]
+
+        if (isNodeOfType(statement, 'FunctionDeclaration')) {
+          assert.ok(isNodeOfType(statement.body, 'FunctionBody'))
+          assert.ok(Array.isArray(statement.body.stmts))
+          nestedBodies++
+        }
+      },
+      Parameter(node) {
+        assertNodeType(node.pat, 'Identifier')
+        assert.equal(node.pat.value, 'input')
+        setterParameters++
+      },
+      TsTypeAnnotation() {
+        getterReturnTypes++
+      },
+      ReturnStatement() {
+        accessorStatements++
+      },
+      CallExpression() {
+        accessorStatements++
+      },
+      BlockStatement(node) {
+        assert.equal(node.type, 'BlockStatement')
+        ordinaryBlocks++
+      },
+      StaticBlock(node) {
+        assert.equal(node.body.type, 'BlockStatement')
+      },
+    })
+
+    assert.equal(bodies.length, 10)
+    assert.equal(expressionArrows, 1)
+    assert.equal(ordinaryBlocks, 2)
+    assert.equal(nestedBodies, 1)
+    assert.equal(visitedBodies, 10)
+    assert.equal(setterParameters, 1)
+    assert.equal(getterReturnTypes, 2)
+    assert.equal(accessorStatements, 2)
+  })
+
+  it('preserves omitted and falsy ancestor state without an ancestors fallback', () => {
+    const ast = parseSync('value', { syntax: 'typescript' })
+    let visits = 0
+
+    ancestor(ast, {
+      Identifier(node, st, ancestors) {
+        assert.equal(st, undefined)
+        assert.equal(ancestors[ancestors.length - 1], node)
+        visits++
+      },
+    })
+
+    for (const initialState of [undefined, false, 0, '', null, NaN]) {
+      ancestor(
+        ast,
+        {
+          Identifier(node, st, ancestors) {
+            assert.strictEqual(st, initialState)
+            assert.equal(ancestors[ancestors.length - 1], node)
+            visits++
+          },
+        },
+        undefined,
+        initialState,
+      )
+    }
+
+    assert.equal(visits, 7)
+  })
+
   it('walks an swc ast with ancestors', () => {
     const ast = parseSync(`function foo(): string { return 'bar' }`, { syntax: 'typescript' })
 
@@ -110,7 +260,7 @@ describe('swc-walk', () => {
           assert.equal(ancestors.length, 5)
           assert.equal(ancestors[4].type, 'StringLiteral')
           assert.equal(ancestors[3].type, 'ReturnStatement')
-          assert.equal(ancestors[2].type, 'BlockStatement')
+          assert.equal(ancestors[2].type, 'FunctionBody')
           assert.equal(ancestors[1].type, 'FunctionDeclaration')
           assert.equal(ancestors[0].type, 'Module')
         },
@@ -484,6 +634,53 @@ describe('swc-walk', () => {
 
     assert.equal(expressionStatementVisits, 1)
     assert.equal(identifierVisits, 0)
+  })
+
+  it('keeps same-node ancestor redispatch paths unique across siblings', () => {
+    const ast = parseSync('foo; bar', { syntax: 'typescript' })
+    const paths: string[][] = []
+    const base: RecursiveVisitors<WalkState> = {
+      Module(node, st, cb) {
+        cb(node, st, 'Script')
+      },
+      Script(node, st, cb) {
+        for (const statement of node.body) {
+          cb(statement, st)
+        }
+      },
+      ExpressionStatement(node, st, cb) {
+        cb(node.expression, st)
+      },
+      Identifier() {},
+    }
+
+    ancestor(
+      ast,
+      {
+        Identifier(node, st, ancestors) {
+          assert.equal(st, state)
+          assert.equal(ancestors[ancestors.length - 1], node)
+          paths.push(ancestors.map(ancestorNode => ancestorNode.type))
+        },
+        Script(node, _st, ancestors) {
+          assert.deepEqual(ancestors, [node])
+          paths.push(ancestors.map(ancestorNode => ancestorNode.type))
+        },
+        Module(node, _st, ancestors) {
+          assert.deepEqual(ancestors, [node])
+          paths.push(ancestors.map(ancestorNode => ancestorNode.type))
+        },
+      },
+      base,
+      state,
+    )
+
+    assert.deepEqual(paths, [
+      ['Module', 'ExpressionStatement', 'Identifier'],
+      ['Module', 'ExpressionStatement', 'Identifier'],
+      ['Module'],
+      ['Module'],
+    ])
   })
 
   it('threads the same state object through simple and ancestor callbacks', () => {

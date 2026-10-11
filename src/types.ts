@@ -23,10 +23,35 @@ type AggregatedNode = {
   TsTypeElement: swc.TsTypeElement
 }
 
-export type AnyNode =
+/*
+ * Temporary bridge for @swc/types 0.1.28; upstream main already has these AST updates.
+ * Once published and adopted, use swc.FunctionBody and remove the accessor/body
+ * corrections (HasFunctionBody, AccessorProperty, CurrentAst, and CurrentFields).
+ * https://github.com/swc-project/swc/blob/main/packages/types/index.ts
+ */
+type FunctionBody = Omit<swc.BlockStatement, 'type'> & { type: 'FunctionBody' }
+type HasFunctionBody = swc.Fn | swc.Constructor | swc.ArrowFunctionExpression
+type AccessorProperty<T> = Omit<T, 'body' | 'param' | 'typeAnnotation'> & { function: swc.Fn }
+
+type CurrentAst<T> = T extends object
+  ? CurrentFields<T extends swc.GetterProperty | swc.SetterProperty ? AccessorProperty<T> : T>
+  : T
+
+type CurrentFields<T> = {
+  [Key in keyof T]: Key extends 'body'
+    ? T extends HasFunctionBody
+      ? CurrentAst<FunctionBody | Exclude<T[Key], swc.BlockStatement>>
+      : CurrentAst<T[Key]>
+    : CurrentAst<T[Key]>
+}
+
+export type AnyNode = CurrentAst<SwcAstNode>
+
+type SwcAstNode =
   | AggregatedNode[keyof AggregatedNode]
   | swc.CatchClause
   | swc.Decorator
+  | FunctionBody
   | swc.Import
   | swc.JSXAttribute
   | swc.JSXClosingElement
